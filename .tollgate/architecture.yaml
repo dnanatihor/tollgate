@@ -1,0 +1,24 @@
+# Example architecture rules from SPEC.md §5.2.
+principles:
+  - {id: P01, title: "API-first", guidance: "New capabilities are exposed through versioned APIs before UIs."}
+  - {id: P02, title: "Event-driven integration", guidance: "Services integrate through events; synchronous cross-service calls need an ADR."}
+  - {id: P03, title: "Cloud-native, twelve-factor", guidance: "Configuration via environment; no hard-coded endpoints or credentials."}
+layers:
+  - {name: domain, paths: ["src/*/domain/**"], may_depend_on: []}
+  - {name: application, paths: ["src/*/application/**"], may_depend_on: [domain]}
+  - {name: infrastructure, paths: ["src/*/infrastructure/**"], may_depend_on: [domain, application]}
+tech_radar:
+  hold: ["moment", "request", "log4j:1.*"]
+  assess: ["some-new-orm"]
+api_guidelines:
+  - {id: G01, rule: "Public REST endpoints are versioned under /v{n}/."}
+  - {id: G02, rule: "List endpoints are paginated."}
+significance_triggers:
+  new_dependency: true
+  new_datastore: true
+  new_public_endpoint: true
+  new_service_paths: ["services/*/", "apps/*/"]
+  infra_paths: ["terraform/**", "k8s/**", "helm/**"]
+docs:
+  adr: ["docs/adr/**/*.md"]
+  architecture: ["docs/architecture/**/*.md"]

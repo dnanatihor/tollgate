@@ -1,0 +1,81 @@
+# Built-in performance checks from SPEC.md §8.4. Summaries are original.
+- id: TG-PERF-001
+  name: N+1 queries
+  summary: >
+    Data access runs inside a loop, so one request issues a query per element
+    instead of one batched query.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/400.html
+  retrieved: 2026-09-30
+- id: TG-PERF-002
+  name: Unbounded queries
+  summary: >
+    A query or list endpoint returns rows without a limit or pagination, so
+    result size follows the whole table.
+  related_cwe: [CWE-770]
+  source_url: https://cwe.mitre.org/data/definitions/770.html
+  retrieved: 2026-09-30
+- id: TG-PERF-003
+  name: Blocking work on an event loop
+  summary: >
+    Sleep or synchronous I/O runs inside an async handler or event loop and
+    stalls other work on that loop.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/400.html
+  retrieved: 2026-09-30
+- id: TG-PERF-004
+  name: Quadratic or worse work
+  summary: >
+    Nested scans over an unbounded collection do work a map or set would do
+    in linear time.
+  related_cwe: [CWE-407]
+  source_url: https://cwe.mitre.org/data/definitions/407.html
+  retrieved: 2026-09-30
+- id: TG-PERF-005
+  name: Catastrophic regular expression backtracking
+  summary: >
+    A regular expression can take exponential time on crafted input because
+    its alternatives overlap.
+  related_cwe: [CWE-1333]
+  source_url: https://cwe.mitre.org/data/definitions/1333.html
+  retrieved: 2026-09-30
+- id: TG-PERF-006
+  name: Loading a whole resource into memory
+  summary: >
+    A file, table, or response is read entirely into memory when the caller
+    only needs a stream or a window.
+  related_cwe: [CWE-400]
+  source_url: https://cwe.mitre.org/data/definitions/400.html
+  retrieved: 2026-09-30
+- id: TG-PERF-007
+  name: Repeated expensive calls
+  summary: >
+    The same expensive computation or remote call is repeated for the same
+    inputs with no cache or batch.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/400.html
+  retrieved: 2026-09-30
+- id: TG-PERF-008
+  name: Heavy work in a hot path
+  summary: >
+    Logging or serialisation of large objects runs on a path that executes
+    for every request or row.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/400.html
+  retrieved: 2026-09-30
+- id: TG-PERF-009
+  name: Unindexed query predicate
+  summary: >
+    A new filter or sort targets a column that has no matching index, and the
+    schema or migration in the change makes that visible.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/400.html
+  retrieved: 2026-09-30
+- id: TG-PERF-010
+  name: Synchronous remote call chain
+  summary: >
+    A request path waits on several remote calls one after another when they
+    do not depend on each other.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/400.html
+  retrieved: 2026-09-30

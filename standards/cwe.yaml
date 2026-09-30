@@ -1,0 +1,357 @@
+# CWE names from the 2025 CWE Top 25 plus the CWEs cited by the other catalogs.
+# https://cwe.mitre.org/top25/archive/2025/2025_cwe_top25.html retrieved 2026-09-30.
+# Summaries are original wording. Each source_url is the MITRE definition page.
+- id: CWE-16
+  name: Configuration
+  summary: A product setting changes security behaviour and is left in a state that weakens a control.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/16.html
+  retrieved: 2026-09-30
+- id: CWE-20
+  name: Improper Input Validation
+  summary: Input is used before it is checked against the rules for that field.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/20.html
+  retrieved: 2026-09-30
+- id: CWE-22
+  name: Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')
+  summary: A file path includes caller-controlled parent segments that escape the intended directory.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/22.html
+  retrieved: 2026-09-30
+- id: CWE-77
+  name: Improper Neutralization of Special Elements used in a Command ('Command Injection')
+  summary: Special characters in untrusted data change the meaning of a command string.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/77.html
+  retrieved: 2026-09-30
+- id: CWE-78
+  name: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')
+  summary: Untrusted data is passed into an operating-system command so the shell runs extra actions.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/78.html
+  retrieved: 2026-09-30
+- id: CWE-79
+  name: Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')
+  summary: Untrusted data is written into a page where the browser treats it as script or markup.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/79.html
+  retrieved: 2026-09-30
+- id: CWE-89
+  name: Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')
+  summary: Untrusted data is concatenated into SQL so the database runs a query the programmer did not write.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/89.html
+  retrieved: 2026-09-30
+- id: CWE-90
+  name: Improper Neutralization of Special Elements used in an LDAP Query ('LDAP Injection')
+  summary: Untrusted data changes the structure of an LDAP filter or query.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/90.html
+  retrieved: 2026-09-30
+- id: CWE-94
+  name: Improper Control of Generation of Code ('Code Injection')
+  summary: Untrusted data is executed or compiled as code.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/94.html
+  retrieved: 2026-09-30
+- id: CWE-117
+  name: Improper Output Neutralization for Logs
+  summary: Untrusted data written to a log can forge entries or inject extra content into the log stream.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/117.html
+  retrieved: 2026-09-30
+- id: CWE-120
+  name: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')
+  summary: A copy into a buffer does not limit itself to the buffer's size.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/120.html
+  retrieved: 2026-09-30
+- id: CWE-121
+  name: Stack-based Buffer Overflow
+  summary: A write past the end of a stack buffer can overwrite control data.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/121.html
+  retrieved: 2026-09-30
+- id: CWE-122
+  name: Heap-based Buffer Overflow
+  summary: A write past the end of a heap buffer can corrupt adjacent heap data.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/122.html
+  retrieved: 2026-09-30
+- id: CWE-125
+  name: Out-of-bounds Read
+  summary: A read uses an index or length outside the allocated object.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/125.html
+  retrieved: 2026-09-30
+- id: CWE-200
+  name: Exposure of Sensitive Information to an Unauthorized Actor
+  summary: Information that should stay restricted is revealed to a caller who is not allowed to have it.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/200.html
+  retrieved: 2026-09-30
+- id: CWE-209
+  name: Generation of Error Message Containing Sensitive Information
+  summary: An error response includes stack traces, queries, or other internals the caller should not see.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/209.html
+  retrieved: 2026-09-30
+- id: CWE-213
+  name: Exposure of Sensitive Information Due to Incompatible Policies
+  summary: A product returns data that one policy treats as sensitive and another policy exposes.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/213.html
+  retrieved: 2026-09-30
+- id: CWE-284
+  name: Improper Access Control
+  summary: The product does not enforce who is allowed to use a resource or operation.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/284.html
+  retrieved: 2026-09-30
+- id: CWE-285
+  name: Improper Authorization
+  summary: An authorization check is missing, uses the wrong subject, or allows an action the policy forbids.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/285.html
+  retrieved: 2026-09-30
+- id: CWE-287
+  name: Improper Authentication
+  summary: The product does not prove a claim of identity before accepting it.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/287.html
+  retrieved: 2026-09-30
+- id: CWE-306
+  name: Missing Authentication for Critical Function
+  summary: A function that changes security or data runs without requiring authentication.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/306.html
+  retrieved: 2026-09-30
+- id: CWE-307
+  name: Improper Restriction of Excessive Authentication Attempts
+  summary: Authentication can be tried without a limit, so guessing stays cheap.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/307.html
+  retrieved: 2026-09-30
+- id: CWE-312
+  name: Cleartext Storage of Sensitive Information
+  summary: A secret or other sensitive value is stored where it can be read without decryption.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/312.html
+  retrieved: 2026-09-30
+- id: CWE-327
+  name: Use of a Broken or Risky Cryptographic Algorithm
+  summary: The product uses a cryptographic algorithm that is known to be weak or obsolete.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/327.html
+  retrieved: 2026-09-30
+- id: CWE-328
+  name: Use of Weak Hash
+  summary: A hash used for security is chosen from a family that is cheap to break or too short.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/328.html
+  retrieved: 2026-09-30
+- id: CWE-330
+  name: Use of Insufficiently Random Values
+  summary: A value that must be unpredictable is generated from a weak or guessable source.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/330.html
+  retrieved: 2026-09-30
+- id: CWE-345
+  name: Insufficient Verification of Data Authenticity
+  summary: The product accepts data without checking that it came from the expected origin and is unchanged.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/345.html
+  retrieved: 2026-09-30
+- id: CWE-352
+  name: Cross-Site Request Forgery (CSRF)
+  summary: A browser is tricked into sending an authenticated request the user did not intend.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/352.html
+  retrieved: 2026-09-30
+- id: CWE-400
+  name: Uncontrolled Resource Consumption
+  summary: A caller can force the product to consume a resource until the service degrades.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/400.html
+  retrieved: 2026-09-30
+- id: CWE-407
+  name: Inefficient Algorithmic Complexity
+  summary: An algorithm's cost grows so fast on valid inputs that a modest request exhausts resources.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/407.html
+  retrieved: 2026-09-30
+- id: CWE-416
+  name: Use After Free
+  summary: The product uses memory after it has been released.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/416.html
+  retrieved: 2026-09-30
+- id: CWE-434
+  name: Unrestricted Upload of File with Dangerous Type
+  summary: An upload accepts a file type that the server or a client will later treat as code.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/434.html
+  retrieved: 2026-09-30
+- id: CWE-476
+  name: NULL Pointer Dereference
+  summary: The product follows a null reference instead of handling the missing value.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/476.html
+  retrieved: 2026-09-30
+- id: CWE-494
+  name: Download of Code Without Integrity Check
+  summary: Code is downloaded and used without verifying its integrity or origin.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/494.html
+  retrieved: 2026-09-30
+- id: CWE-502
+  name: Deserialization of Untrusted Data
+  summary: A serialized object from an untrusted source is restored in a way that can run attacker-chosen behaviour.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/502.html
+  retrieved: 2026-09-30
+- id: CWE-522
+  name: Insufficiently Protected Credentials
+  summary: Credentials are stored or transmitted with protection that is missing or too weak.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/522.html
+  retrieved: 2026-09-30
+- id: CWE-532
+  name: Insertion of Sensitive Information into Log File
+  summary: A log record includes a secret or personal data that the log readers should not have.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/532.html
+  retrieved: 2026-09-30
+- id: CWE-611
+  name: Improper Restriction of XML External Entity Reference
+  summary: An XML parser resolves external entities under the caller's influence.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/611.html
+  retrieved: 2026-09-30
+- id: CWE-636
+  name: Not Failing Securely ('Failing Open')
+  summary: When a check errors, the product allows the action instead of denying it.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/636.html
+  retrieved: 2026-09-30
+- id: CWE-639
+  name: Authorization Bypass Through User-Controlled Key
+  summary: A caller-supplied object key is trusted without an ownership or authorization check.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/639.html
+  retrieved: 2026-09-30
+- id: CWE-770
+  name: Allocation of Resources Without Limits or Throttling
+  summary: The product allocates work or memory from a request without a bound.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/770.html
+  retrieved: 2026-09-30
+- id: CWE-778
+  name: Insufficient Logging
+  summary: Security-relevant actions are not recorded, so later investigation has no evidence.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/778.html
+  retrieved: 2026-09-30
+- id: CWE-787
+  name: Out-of-bounds Write
+  summary: A write uses an index or length outside the allocated object.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/787.html
+  retrieved: 2026-09-30
+- id: CWE-798
+  name: Use of Hard-coded Credentials
+  summary: A password, token, or key is embedded in the product instead of being supplied as configuration.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/798.html
+  retrieved: 2026-09-30
+- id: CWE-799
+  name: Improper Control of Interaction Frequency
+  summary: The product does not limit how often a sensitive action can be repeated.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/799.html
+  retrieved: 2026-09-30
+- id: CWE-829
+  name: Inclusion of Functionality from Untrusted Control Sphere
+  summary: The product loads code or functionality from a source it does not control.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/829.html
+  retrieved: 2026-09-30
+- id: CWE-841
+  name: Improper Enforcement of Behavioral Workflow
+  summary: Steps in a business workflow can be skipped or reordered by the caller.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/841.html
+  retrieved: 2026-09-30
+- id: CWE-862
+  name: Missing Authorization
+  summary: An action that should require an authorization check does not perform one.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/862.html
+  retrieved: 2026-09-30
+- id: CWE-863
+  name: Incorrect Authorization
+  summary: An authorization check runs but uses the wrong rule, object, or subject.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/863.html
+  retrieved: 2026-09-30
+- id: CWE-915
+  name: Improperly Controlled Modification of Dynamically-Determined Object Attributes
+  summary: The caller can set object properties that should not be writable, such as a role flag.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/915.html
+  retrieved: 2026-09-30
+- id: CWE-916
+  name: Use of Password Hash With Insufficient Computational Effort
+  summary: A password hash is cheap enough that guessing remains practical.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/916.html
+  retrieved: 2026-09-30
+- id: CWE-918
+  name: Server-Side Request Forgery (SSRF)
+  summary: The server requests a URL the caller influences, including addresses that are not public.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/918.html
+  retrieved: 2026-09-30
+- id: CWE-942
+  name: Permissive Cross-domain Policy with Untrusted Domains
+  summary: A cross-origin policy trusts domains that should not read this product's data.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/942.html
+  retrieved: 2026-09-30
+- id: CWE-1059
+  name: Incomplete Documentation
+  summary: Interfaces or versions exist that are not described, so operators cannot tell what is deployed.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/1059.html
+  retrieved: 2026-09-30
+- id: CWE-1104
+  name: Use of Unmaintained Third Party Components
+  summary: A dependency is no longer maintained, so known problems in it will not be fixed upstream.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/1104.html
+  retrieved: 2026-09-30
+- id: CWE-1329
+  name: Reliance on Component That is Not Updateable
+  summary: A component cannot be patched, so a known flaw has to stay in the product.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/1329.html
+  retrieved: 2026-09-30
+- id: CWE-1333
+  name: Inefficient Regular Expression Complexity
+  summary: A regular expression can take extreme time on some inputs because of how alternatives overlap.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/1333.html
+  retrieved: 2026-09-30
+- id: CWE-1357
+  name: Reliance on Insufficiently Trustworthy Component
+  summary: A security decision depends on a component that is not trusted for that decision.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/1357.html
+  retrieved: 2026-09-30
+- id: CWE-1395
+  name: Dependency on Vulnerable Third-Party Component
+  summary: The product depends on a third-party component that has a known vulnerability.
+  related_cwe: []
+  source_url: https://cwe.mitre.org/data/definitions/1395.html
+  retrieved: 2026-09-30

@@ -1,0 +1,7 @@
+# Skeleton only. Phase 7 fills eval/cases/<id>/ from SPEC.md §13.
+# This directory is not a case the harness should run.
+lens: security
+language: python
+expect:
+  - {standards_any: ["OWASP-WEB-2025:A05", "CWE-89"], file: app/orders.py, lines: [42, 44], min_severity: high}
+must_not: []

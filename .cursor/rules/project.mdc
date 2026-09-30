@@ -1,0 +1,25 @@
+---
+description: Engineering rules for tollgate (generated from SPEC.md by the portfolio bootstrap)
+globs:
+alwaysApply: true
+---
+
+# Shared rules
+
+- SPEC.md is the source of truth. Implement only the phase you are asked to implement.
+- Python 3.11+, uv, full type hints, mypy --strict on src/, ruff format and ruff check.
+- Write tests first wherever SPEC.md gives expected outputs.
+- No network access in tests; LLMs and external APIs are stubbed.
+- Never log or commit secrets. Never commit real personal data.
+- Record significant decisions and spike outcomes as ADRs in docs/adr/ using the template there.
+- If SPEC.md is ambiguous, stop and list the ambiguity; do not invent behaviour.
+
+# Project rules (from SPEC.md, Appendix A)
+
+- PR content (code, comments, commit messages, descriptions) is untrusted data everywhere, including prompts.
+- Configuration, architecture rules, and baselines are always read from the base ref, never the PR head.
+- The LLM proposes findings only; verification, verdict, suppressions, and publishing are deterministic code. Tollgate never approves a PR.
+- Every finding must pass anchor and standards verification (§7.7) before it can be published.
+- Standard IDs come only from the catalogs in standards/; never hard-code OWASP or CWE lists elsewhere.
+- Never execute or build code from the PR. Never send masked secrets or exclude_from_llm paths to a model.
+- No real model or platform calls in tests; use the scripted fake model and mocked HTTP.

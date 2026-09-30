@@ -1,0 +1,83 @@
+# Names from the OWASP API Security Top 10 2023.
+# https://owasp.org/API-Security/editions/2023/en/0x11-t10/ retrieved 2026-09-30.
+# Summaries are original wording.
+- id: API1
+  name: Broken Object Level Authorization
+  summary: >
+    An API uses an object id from the caller without checking that this caller
+    is allowed to access that object.
+  related_cwe: [CWE-284, CWE-639, CWE-862]
+  source_url: https://owasp.org/API-Security/editions/2023/en/0xa1-broken-object-level-authorization/
+  retrieved: 2026-09-30
+- id: API2
+  name: Broken Authentication
+  summary: >
+    Authentication mechanisms for the API can be skipped, brute-forced, or
+    confused across users and tokens.
+  related_cwe: [CWE-287, CWE-306, CWE-307, CWE-798]
+  source_url: https://owasp.org/API-Security/editions/2023/en/0xa2-broken-authentication/
+  retrieved: 2026-09-30
+- id: API3
+  name: Broken Object Property Level Authorization
+  summary: >
+    The API accepts or returns object properties the caller should not set or
+    see, including mass assignment of privileged fields.
+  related_cwe: [CWE-213, CWE-915]
+  source_url: https://owasp.org/API-Security/editions/2023/en/0xa3-broken-object-property-level-authorization/
+  retrieved: 2026-09-30
+- id: API4
+  name: Unrestricted Resource Consumption
+  summary: >
+    A request can force the API to spend unbounded CPU, memory, storage, or
+    downstream calls without limits or throttling.
+  related_cwe: [CWE-400, CWE-770]
+  source_url: https://owasp.org/API-Security/editions/2023/en/0xa4-unrestricted-resource-consumption/
+  retrieved: 2026-09-30
+- id: API5
+  name: Broken Function Level Authorization
+  summary: >
+    Administrative or other-role functions are exposed to callers who are
+    authenticated but not authorised for that function.
+  related_cwe: [CWE-285, CWE-862]
+  source_url: https://owasp.org/API-Security/editions/2023/en/0xa5-broken-function-level-authorization/
+  retrieved: 2026-09-30
+- id: API6
+  name: Unrestricted Access to Sensitive Business Flows
+  summary: >
+    A business flow such as purchasing or posting is left open to automated
+    abuse because there is no limit tied to the sensitivity of the flow.
+  related_cwe: [CWE-799, CWE-841]
+  source_url: https://owasp.org/API-Security/editions/2023/en/0xa6-unrestricted-access-to-sensitive-business-flows/
+  retrieved: 2026-09-30
+- id: API7
+  name: Server Side Request Forgery
+  summary: >
+    The API fetches a remote resource using a URL supplied or influenced by
+    the caller, without restricting the target.
+  related_cwe: [CWE-918]
+  source_url: https://owasp.org/API-Security/editions/2023/en/0xa7-server-side-request-forgery/
+  retrieved: 2026-09-30
+- id: API8
+  name: Security Misconfiguration
+  summary: >
+    API servers, gateways, or error handlers are deployed with defaults that
+    expose stack traces, unused methods, or overly broad permissions.
+  related_cwe: [CWE-16, CWE-209]
+  source_url: https://owasp.org/API-Security/editions/2023/en/0xa8-security-misconfiguration/
+  retrieved: 2026-09-30
+- id: API9
+  name: Improper Inventory Management
+  summary: >
+    Old, debug, or undocumented API versions stay deployed, so fixes on the
+    current version do not cover every host that answers.
+  related_cwe: [CWE-1059]
+  source_url: https://owasp.org/API-Security/editions/2023/en/0xa9-improper-inventory-management/
+  retrieved: 2026-09-30
+- id: API10
+  name: Unsafe Consumption of APIs
+  summary: >
+    Data from another API is trusted as if it were already validated, and is
+    then passed into redirects, queries, or files.
+  related_cwe: [CWE-20, CWE-345]
+  source_url: https://owasp.org/API-Security/editions/2023/en/0xaa-unsafe-consumption-of-apis/
+  retrieved: 2026-09-30

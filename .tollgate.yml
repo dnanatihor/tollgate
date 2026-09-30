@@ -1,0 +1,29 @@
+# Example repository configuration from SPEC.md §5.1.
+# Model ids are placeholders for the open choice in §18 item 2.
+mode: comment
+fail_on: critical
+min_inline: {severity: medium, confidence: medium}
+max_inline_comments: 12
+lenses: {security: true, llm_security: auto, architecture: true, performance: true}
+paths:
+  exclude: ["**/vendor/**", "**/node_modules/**", "**/*.min.js", "**/dist/**", "**/*.lock", "**/generated/**"]
+  exclude_from_llm: ["**/*.pem", "**/*.key", "config/prod/**"]
+  review_tests: false
+limits: {max_files: 150, max_changed_lines: 5000}
+analyzers: {semgrep: auto, gitleaks: auto, osv: auto}
+standards: {owasp_web: "2025"}
+suppressions: {allow_new_in_pr_max_severity: medium}
+incremental: false
+critic: {enabled: true, min_severity: high}
+llm:
+  roles:
+    triage: {model: "openai:gpt-4.1-mini"}
+    review: {model: "anthropic:claude-sonnet-4-5"}
+    critic: {model: "anthropic:claude-sonnet-4-5"}
+  base_url: null
+  temperature: 0
+  structured_output: auto
+  context_window: null
+  budget: {max_input_tokens_per_pr: 400000, max_usd_per_pr: 2.00}
+  local_only: false
+  allowed_providers: []

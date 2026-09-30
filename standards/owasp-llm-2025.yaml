@@ -1,0 +1,83 @@
+# Names from the OWASP Top 10 for LLM Applications 2025.
+# https://genai.owasp.org/llm-top-10/ retrieved 2026-09-30.
+# Summaries are original wording.
+- id: LLM01
+  name: Prompt Injection
+  summary: >
+    Untrusted text is placed where the model treats it as instructions, so the
+    caller can override the application's task or policy.
+  related_cwe: []
+  source_url: https://genai.owasp.org/llmrisk/llm01-prompt-injection/
+  retrieved: 2026-09-30
+- id: LLM02
+  name: Sensitive Information Disclosure
+  summary: >
+    Secrets, personal data, or other restricted context is sent to a model,
+    stored in a prompt, or returned to a caller who should not see it.
+  related_cwe: [CWE-200, CWE-312, CWE-532]
+  source_url: https://genai.owasp.org/llmrisk/llm02-sensitive-information-disclosure/
+  retrieved: 2026-09-30
+- id: LLM03
+  name: Supply Chain
+  summary: >
+    Models, adapters, datasets, or libraries are loaded from unverified
+    sources, including flags that execute remote code from a model repository.
+  related_cwe: [CWE-494, CWE-829]
+  source_url: https://genai.owasp.org/llmrisk/llm03-supply-chain/
+  retrieved: 2026-09-30
+- id: LLM04
+  name: Data and Model Poisoning
+  summary: >
+    Training, fine-tuning, or retrieval data can be altered by an attacker so
+    later answers follow the attacker's content.
+  related_cwe: []
+  source_url: https://genai.owasp.org/llmrisk/llm04-data-and-model-poisoning/
+  retrieved: 2026-09-30
+- id: LLM05
+  name: Improper Output Handling
+  summary: >
+    Model text is passed into a shell, query, browser, or file operation
+    without treating it as untrusted data.
+  related_cwe: [CWE-78, CWE-79, CWE-89, CWE-94]
+  source_url: https://genai.owasp.org/llmrisk/llm05-improper-output-handling/
+  retrieved: 2026-09-30
+- id: LLM06
+  name: Excessive Agency
+  summary: >
+    An agent tool can write, delete, or pay without a check that a person
+    confirmed the action and that the tool's scope is limited.
+  related_cwe: [CWE-862]
+  source_url: https://genai.owasp.org/llmrisk/llm06-excessive-agency/
+  retrieved: 2026-09-30
+- id: LLM07
+  name: System Prompt Leakage
+  summary: >
+    Hidden instructions are exposed, or they contain credentials and security
+    rules that should not live only inside the prompt.
+  related_cwe: [CWE-200, CWE-798]
+  source_url: https://genai.owasp.org/llmrisk/llm07-system-prompt-leakage/
+  retrieved: 2026-09-30
+- id: LLM08
+  name: Vector and Embedding Weaknesses
+  summary: >
+    Retrieval uses embeddings or a vector index without per-user or per-tenant
+    filtering, so one caller can receive another caller's documents.
+  related_cwe: [CWE-284, CWE-862]
+  source_url: https://genai.owasp.org/llmrisk/llm08-vector-and-embedding-weaknesses/
+  retrieved: 2026-09-30
+- id: LLM09
+  name: Misinformation
+  summary: >
+    High-stakes answers are shown as fact without grounding, citations, or a
+    check against an authoritative source.
+  related_cwe: []
+  source_url: https://genai.owasp.org/llmrisk/llm09-misinformation/
+  retrieved: 2026-09-30
+- id: LLM10
+  name: Unbounded Consumption
+  summary: >
+    Model calls in a request path have no token limit, timeout, rate limit, or
+    cost cap, so one caller can exhaust quota or budget.
+  related_cwe: [CWE-400, CWE-770]
+  source_url: https://genai.owasp.org/llmrisk/llm10-unbounded-consumption/
+  retrieved: 2026-09-30

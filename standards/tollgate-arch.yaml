@@ -1,0 +1,81 @@
+# Built-in architecture checks from SPEC.md §8.3. Summaries are original.
+- id: TG-ARCH-001
+  name: Layer dependency violation
+  summary: >
+    A module imports a layer it is not allowed to depend on, based on the
+    paths and may_depend_on rules in architecture.yaml.
+  related_cwe: []
+  source_url: https://owasp.org/Top10/2025/A01_2025-Broken_Access_Control/
+  retrieved: 2026-09-30
+- id: TG-ARCH-002
+  name: Hold or unassessed technology
+  summary: >
+    A manifest adds a dependency on the tech radar's hold list, or on an
+    assess item without an ADR in the pull request.
+  related_cwe: [CWE-1104]
+  source_url: https://owasp.org/Top10/2025/A03_2025-Software_Supply_Chain_Failures/
+  retrieved: 2026-09-30
+- id: TG-ARCH-003
+  name: Significant change without an ADR
+  summary: >
+    A significance trigger fired, such as a new datastore or public endpoint,
+    and the pull request does not add an architecture decision record.
+  related_cwe: []
+  source_url: https://owasp.org/Top10/2025/A06_2025-Insecure_Design/
+  retrieved: 2026-09-30
+- id: TG-ARCH-004
+  name: Conflict with an accepted ADR
+  summary: >
+    The change contradicts an accepted ADR that is present in the repository,
+    and the finding cites that ADR path.
+  related_cwe: []
+  source_url: https://owasp.org/Top10/2025/A08_2025-Software_or_Data_Integrity_Failures/
+  retrieved: 2026-09-30
+- id: TG-ARCH-005
+  name: API guideline violation
+  summary: >
+    A public API departs from an organisation guideline, such as an unversioned
+    or unpaginated HTTP interface.
+  related_cwe: []
+  source_url: https://owasp.org/www-project-api-security/
+  retrieved: 2026-09-30
+- id: TG-ARCH-006
+  name: Breaking public contract change
+  summary: >
+    An OpenAPI operation or property, a protobuf field, or a database
+    migration changes in a way existing clients or data cannot survive.
+  related_cwe: []
+  source_url: https://owasp.org/www-project-api-security/
+  retrieved: 2026-09-30
+- id: TG-ARCH-007
+  name: Outbound call without resilience controls
+  summary: >
+    A new outbound call has no timeout, no retry with backoff, or no
+    idempotency where a repeat would be unsafe.
+  related_cwe: []
+  source_url: https://owasp.org/Top10/2025/A10_2025-Mishandling_of_Exceptional_Conditions/
+  retrieved: 2026-09-30
+- id: TG-ARCH-008
+  name: Endpoint without operational signals
+  summary: >
+    A new endpoint or service ships without logging, metrics, or tracing that
+    operators can use to see failures.
+  related_cwe: [CWE-778]
+  source_url: https://owasp.org/Top10/2025/A09_2025-Security_Logging_and_Alerting_Failures/
+  retrieved: 2026-09-30
+- id: TG-ARCH-009
+  name: Hard-coded configuration
+  summary: >
+    Endpoints, credentials, or environment-specific values are written into
+    source instead of being supplied as configuration.
+  related_cwe: [CWE-798]
+  source_url: https://owasp.org/Top10/2025/A07_2025-Authentication_Failures/
+  retrieved: 2026-09-30
+- id: TG-ARCH-010
+  name: Classification boundary crossed
+  summary: >
+    Restricted fields or tenant data leave the boundary declared for them in
+    the organisation architecture rules.
+  related_cwe: [CWE-200]
+  source_url: https://owasp.org/Top10/2025/A01_2025-Broken_Access_Control/
+  retrieved: 2026-09-30

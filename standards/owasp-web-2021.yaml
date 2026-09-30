@@ -1,0 +1,83 @@
+# Names from https://owasp.org/Top10/2021/ retrieved 2026-09-30.
+# Summaries are original wording; the official text is at each source_url.
+- id: A01
+  name: Broken Access Control
+  summary: >
+    Enforcement of who may see or change data fails, including missing
+    object-level checks and paths that bypass the intended authorisation.
+  related_cwe: [CWE-22, CWE-284, CWE-352, CWE-639, CWE-862, CWE-863]
+  source_url: https://owasp.org/Top10/A01_2021-Broken_Access_Control/
+  retrieved: 2026-09-30
+- id: A02
+  name: Cryptographic Failures
+  summary: >
+    Sensitive data is exposed because encryption is missing, weak, or applied
+    to the wrong values, including credentials stored in reversible form.
+  related_cwe: [CWE-312, CWE-327, CWE-328, CWE-330, CWE-916]
+  source_url: https://owasp.org/Top10/A02_2021-Cryptographic_Failures/
+  retrieved: 2026-09-30
+- id: A03
+  name: Injection
+  summary: >
+    Data from the caller is concatenated into a query, command, or document
+    that the interpreter treats as instructions.
+  related_cwe: [CWE-77, CWE-78, CWE-79, CWE-89, CWE-90, CWE-94]
+  source_url: https://owasp.org/Top10/A03_2021-Injection/
+  retrieved: 2026-09-30
+- id: A04
+  name: Insecure Design
+  summary: >
+    The risk comes from missing or unusable security controls in the design,
+    not only from an implementation mistake in an otherwise sound control.
+  related_cwe: [CWE-209, CWE-522]
+  source_url: https://owasp.org/Top10/A04_2021-Insecure_Design/
+  retrieved: 2026-09-30
+- id: A05
+  name: Security Misconfiguration
+  summary: >
+    Framework, server, or cloud defaults are left unsafe, including open
+    cloud storage, verbose errors, and unnecessary features turned on.
+  related_cwe: [CWE-16, CWE-611, CWE-942]
+  source_url: https://owasp.org/Top10/A05_2021-Security_Misconfiguration/
+  retrieved: 2026-09-30
+- id: A06
+  name: Vulnerable and Outdated Components
+  summary: >
+    The application uses a component with a known vulnerability, or a component
+    that is unused and unmaintained and therefore easy to ignore when it breaks.
+  related_cwe: [CWE-1104, CWE-1395]
+  source_url: https://owasp.org/Top10/A06_2021-Vulnerable_and_Outdated_Components/
+  retrieved: 2026-09-30
+- id: A07
+  name: Identification and Authentication Failures
+  summary: >
+    Authentication can be guessed, skipped, or replayed because of weak
+    credential rules, missing rotation, or session handling that does not
+    bind the session to the user.
+  related_cwe: [CWE-287, CWE-306, CWE-307, CWE-798]
+  source_url: https://owasp.org/Top10/A07_2021-Identification_and_Authentication_Failures/
+  retrieved: 2026-09-30
+- id: A08
+  name: Software and Data Integrity Failures
+  summary: >
+    Updates, plugins, or serialized objects are used without verifying
+    integrity, so an attacker can substitute code or object graphs.
+  related_cwe: [CWE-345, CWE-494, CWE-502, CWE-829]
+  source_url: https://owasp.org/Top10/A08_2021-Software_and_Data_Integrity_Failures/
+  retrieved: 2026-09-30
+- id: A09
+  name: Security Logging and Monitoring Failures
+  summary: >
+    Login, access-control, and other security events are not logged or
+    watched, so failures are detected late or not at all.
+  related_cwe: [CWE-117, CWE-532, CWE-778]
+  source_url: https://owasp.org/Top10/A09_2021-Security_Logging_and_Monitoring_Failures/
+  retrieved: 2026-09-30
+- id: A10
+  name: Server-Side Request Forgery
+  summary: >
+    The server fetches a URL the caller influences, without checking that the
+    destination is a permitted host.
+  related_cwe: [CWE-918]
+  source_url: https://owasp.org/Top10/A10_2021-Server-Side_Request_Forgery_%28SSRF%29/
+  retrieved: 2026-09-30

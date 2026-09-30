@@ -1,0 +1,87 @@
+# Names and category order from https://owasp.org/Top10/2025/ retrieved 2026-09-30.
+# Summaries are original wording; the official text is at each source_url.
+- id: A01
+  name: Broken Access Control
+  summary: >
+    Access checks are missing or bypassable, so a caller can read or change
+    other users' objects, call functions they are not allowed to, or reach
+    internal systems through server-side requests.
+  related_cwe: [CWE-22, CWE-284, CWE-285, CWE-352, CWE-639, CWE-862, CWE-863, CWE-918]
+  source_url: https://owasp.org/Top10/2025/A01_2025-Broken_Access_Control/
+  retrieved: 2026-09-30
+- id: A02
+  name: Security Misconfiguration
+  summary: >
+    The deployed system is left in an unsafe configuration, such as debug
+    features, missing headers, permissive cross-origin policy, or XML parsers
+    that resolve external entities.
+  related_cwe: [CWE-16, CWE-611, CWE-942]
+  source_url: https://owasp.org/Top10/2025/A02_2025-Security_Misconfiguration/
+  retrieved: 2026-09-30
+- id: A03
+  name: Software Supply Chain Failures
+  summary: >
+    Build, dependency, or distribution systems pull in unmaintained, vulnerable,
+    or untrusted components, so a compromise outside the application becomes a
+    compromise of the application.
+  related_cwe: [CWE-829, CWE-1104, CWE-1329, CWE-1357, CWE-1395]
+  source_url: https://owasp.org/Top10/2025/A03_2025-Software_Supply_Chain_Failures/
+  retrieved: 2026-09-30
+- id: A04
+  name: Cryptographic Failures
+  summary: >
+    Data that needs protection is stored or sent with missing, weak, or
+    predictable cryptography, including broken algorithms and insufficiently
+    strong password hashing.
+  related_cwe: [CWE-312, CWE-327, CWE-328, CWE-330, CWE-916]
+  source_url: https://owasp.org/Top10/2025/A04_2025-Cryptographic_Failures/
+  retrieved: 2026-09-30
+- id: A05
+  name: Injection
+  summary: >
+    Untrusted input is interpreted as a command, query, or markup, letting a
+    caller change SQL, shell, LDAP, template, or page output.
+  related_cwe: [CWE-77, CWE-78, CWE-79, CWE-89, CWE-90, CWE-94]
+  source_url: https://owasp.org/Top10/2025/A05_2025-Injection/
+  retrieved: 2026-09-30
+- id: A06
+  name: Insecure Design
+  summary: >
+    The feature is unsafe by design: missing threat controls, business rules
+    that cannot be enforced safely, or security decisions that no later patch
+    can fully repair.
+  related_cwe: [CWE-209, CWE-522]
+  source_url: https://owasp.org/Top10/2025/A06_2025-Insecure_Design/
+  retrieved: 2026-09-30
+- id: A07
+  name: Authentication Failures
+  summary: >
+    Sign-in, session, or credential handling lets an attacker impersonate a
+    user, skip a step, or reuse a secret that was embedded or guessed.
+  related_cwe: [CWE-287, CWE-306, CWE-307, CWE-798]
+  source_url: https://owasp.org/Top10/2025/A07_2025-Authentication_Failures/
+  retrieved: 2026-09-30
+- id: A08
+  name: Software or Data Integrity Failures
+  summary: >
+    Code, updates, or deserialized data are trusted without a check that they
+    came from the expected source and were not changed.
+  related_cwe: [CWE-345, CWE-494, CWE-502, CWE-829]
+  source_url: https://owasp.org/Top10/2025/A08_2025-Software_or_Data_Integrity_Failures/
+  retrieved: 2026-09-30
+- id: A09
+  name: Security Logging and Alerting Failures
+  summary: >
+    Security-relevant events are not recorded, are recorded with secrets, or
+    never produce an alert, so an attack is invisible after the fact.
+  related_cwe: [CWE-117, CWE-532, CWE-778]
+  source_url: https://owasp.org/Top10/2025/A09_2025-Security_Logging_and_Alerting_Failures/
+  retrieved: 2026-09-30
+- id: A10
+  name: Mishandling of Exceptional Conditions
+  summary: >
+    Error and edge paths leak internals, skip checks, or fail open, so an
+    abnormal condition becomes a way through the control.
+  related_cwe: [CWE-209, CWE-476, CWE-636]
+  source_url: https://owasp.org/Top10/2025/A10_2025-Mishandling_of_Exceptional_Conditions/
+  retrieved: 2026-09-30

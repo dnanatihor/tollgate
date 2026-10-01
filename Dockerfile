@@ -5,6 +5,7 @@ WORKDIR /app
 COPY pyproject.toml README.md LICENSE ./
 COPY src ./src
 COPY standards ./standards
+COPY prompts ./prompts
 RUN pip install --no-cache-dir .
 
 ENTRYPOINT ["tollgate"]

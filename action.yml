@@ -1,0 +1,13 @@
+name: Tollgate
+description: Review a pull request. The model proposes findings; this action never approves.
+inputs:
+  github-token:
+    description: Token used to publish the review
+    required: false
+    default: ${{ github.token }}
+runs:
+  using: docker
+  image: Dockerfile
+  args:
+    - review
+    - --github

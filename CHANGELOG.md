@@ -13,3 +13,4 @@ and this project uses [Semantic Versioning](https://semver.org/).
 - Phase 1 local diff pipeline: classification, structural context, and dry-run unit planning.
 - Phase 2 LLM layer: structured output with fallback, verification, ranking, verdict, and local Markdown, JSON, and SARIF.
 - Phase 3 analyzers: layer, tech-radar, significance, contract, and migration checks, plus scanner coverage notes.
+- Phase 4 GitHub publishing: batched reviews, summary state, SARIF, and fork read-only mode.

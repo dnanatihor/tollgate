@@ -1,0 +1,9 @@
+services:
+  tollgate:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      GITHUB_WEBHOOK_SECRET: ${GITHUB_WEBHOOK_SECRET:-change-me}
+      BITBUCKET_WEBHOOK_SECRET: ${BITBUCKET_WEBHOOK_SECRET:-change-me}
+    command: ["serve"]

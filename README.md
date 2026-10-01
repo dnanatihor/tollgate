@@ -53,7 +53,7 @@ Scripted eval report from `uv run python eval/harness.py` (`eval/reports/latest.
 
 ## Roadmap
 
-The webhook service is not built yet. Live GitHub, Bitbucket Cloud, and Data Center runs still need credentials this checkout does not have.
+`tollgate serve` queues signed GitHub and Bitbucket webhooks. A live GitHub App review still needs credentials this checkout does not have.
 
 ## Licence
 

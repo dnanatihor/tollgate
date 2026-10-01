@@ -392,6 +392,19 @@ def models_check(
         typer.echo(f"{role} model={model_id} mode={mode} latency_s={elapsed:.3f}")
 
 
+@app.command()
+def serve(
+    host: str = typer.Option("0.0.0.0", "--host"),
+    port: int = typer.Option(8080, "--port"),
+) -> None:
+    """Run the webhook service."""
+    import uvicorn
+
+    from tollgate.server.app import create_app
+
+    uvicorn.run(create_app(), host=host, port=port)
+
+
 def main() -> None:
     try:
         app()

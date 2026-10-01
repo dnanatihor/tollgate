@@ -17,3 +17,4 @@ and this project uses [Semantic Versioning](https://semver.org/).
 - Phase 5 Bitbucket Cloud publishing: comments, summary upsert, and Code Insights batches.
 - Phase 6 Bitbucket Data Center 8.19 publishing: anchored comments, insights, and build status.
 - Phase 7 evaluation harness, critic pass, nightly workflow, and the README.
+- Phase 8 webhook service: HMAC checks and an in-process job queue.

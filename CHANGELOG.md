@@ -11,3 +11,4 @@ and this project uses [Semantic Versioning](https://semver.org/).
 - Repository created from SPEC.md.
 - Phase 0 scaffold: configuration loading, standards catalogs, and `tollgate standards list`.
 - Phase 1 local diff pipeline: classification, structural context, and dry-run unit planning.
+- Phase 2 LLM layer: structured output with fallback, verification, ranking, verdict, and local Markdown, JSON, and SARIF.

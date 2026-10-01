@@ -6,7 +6,7 @@ import asyncio
 import json
 import os
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 import httpx
 import typer
@@ -25,6 +25,7 @@ from tollgate.rank import Ranked, rank_findings
 from tollgate.render.sarif import render_sarif
 from tollgate.render.summary import render_json, render_markdown
 from tollgate.scm.bitbucket_cloud import BitbucketCloudProvider
+from tollgate.scm.bitbucket_dc import BitbucketDataCenterProvider
 from tollgate.scm.github import GitHubProvider, checkout_mode, is_fork_event
 from tollgate.sources.local_git import load_local_git
 from tollgate.standards import load_catalogs, render_standards_list
@@ -68,6 +69,14 @@ def review(
     base: str = typer.Option("main", "--base", help="Base ref whose configuration is loaded."),
     head: str = typer.Option("HEAD", "--head", help="Head ref to diff against the merge base."),
     github: bool = typer.Option(False, "--github", help="Review the GitHub pull request in CI."),
+    bitbucket_dc: bool = typer.Option(
+        False,
+        "--bitbucket-dc",
+        help="Review a Bitbucket Data Center pull request.",
+    ),
+    project: str = typer.Option("", "--project", help="Data Center project key."),
+    repo: str = typer.Option("", "--repo", help="Data Center repository slug."),
+    pr_id: str = typer.Option("", "--pr", help="Data Center pull request id."),
     bitbucket_cloud: bool = typer.Option(
         False,
         "--bitbucket-cloud",
@@ -85,7 +94,9 @@ def review(
         _github_preflight()
     if bitbucket_cloud:
         _bitbucket_preflight()
-    if not local and not github and not bitbucket_cloud:
+    if bitbucket_dc:
+        _dc_preflight(project, repo, pr_id)
+    if not any((local, github, bitbucket_cloud, bitbucket_dc)):
         raise ConfigError("mode", "review requires --local until a platform mode is implemented")
     if report_format not in {"md", "json", "sarif"}:
         raise ConfigError("format", "format must be md, json, or sarif")
@@ -128,6 +139,8 @@ def review(
             _publish_github(ranked, verdict, loaded.tollgate.fingerprint(), loaded.tollgate.mode)
         if bitbucket_cloud:
             _publish_bitbucket(ranked, verdict, loaded.tollgate.fingerprint())
+        if bitbucket_dc:
+            _publish_dc(ranked, verdict, loaded.tollgate.fingerprint(), project, repo, pr_id)
         return
     try:
         outcome = asyncio.run(
@@ -153,6 +166,8 @@ def review(
         _publish_github(merged, verdict, loaded.tollgate.fingerprint(), loaded.tollgate.mode)
     if bitbucket_cloud:
         _publish_bitbucket(merged, verdict, loaded.tollgate.fingerprint())
+    if bitbucket_dc:
+        _publish_dc(merged, verdict, loaded.tollgate.fingerprint(), project, repo, pr_id)
     if loaded.tollgate.mode != "comment" and verdict.outcome == "block":
         raise SystemExit(1)
 
@@ -254,6 +269,52 @@ def _publish_bitbucket(ranked: Ranked, verdict: Verdict, config_hash: str) -> No
                 verdict=verdict,
                 markdown=markdown,
                 config_hash=config_hash,
+            )
+
+    asyncio.run(publish())
+
+
+def _dc_preflight(project: str, repo: str, pr_id: str) -> None:
+    if not project or not repo or not pr_id:
+        raise ConfigError("bitbucket_dc", "project, repo, and pr are required")
+    if not os.environ.get("BITBUCKET_URL") or not os.environ.get("BITBUCKET_TOKEN"):
+        raise ConfigError("bitbucket_dc", "BITBUCKET_URL and BITBUCKET_TOKEN are required")
+
+
+def _publish_dc(
+    ranked: Ranked,
+    verdict: Verdict,
+    config_hash: str,
+    project: str,
+    repo: str,
+    pr_id: str,
+) -> None:
+    base_url = os.environ["BITBUCKET_URL"]
+    token = os.environ["BITBUCKET_TOKEN"]
+    markdown = render_markdown(ranked, verdict)
+    line_types: dict[str, Literal["ADDED", "CONTEXT"]] = {
+        item.fingerprint: "ADDED"
+        for item in ranked.findings
+        if item.file is not None and item.start_line is not None
+    }
+
+    async def publish() -> None:
+        headers = {"Authorization": f"Bearer {token}"}
+        async with httpx.AsyncClient(headers=headers) as client:
+            provider = BitbucketDataCenterProvider(
+                client,
+                base_url=base_url,
+                project=project,
+                repo=repo,
+            )
+            await provider.publish(
+                number=pr_id,
+                commit=os.environ.get("BITBUCKET_COMMIT", "HEAD"),
+                findings=ranked.findings,
+                verdict=verdict,
+                markdown=markdown,
+                config_hash=config_hash,
+                line_types=line_types,
             )
 
     asyncio.run(publish())

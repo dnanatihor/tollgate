@@ -1,0 +1,14 @@
+// Bitbucket Data Center 8.19. Verified against the REST shapes in ADR 0005, not a live controller.
+pipeline {
+    agent any
+    environment {
+        BITBUCKET_TOKEN = credentials('bitbucket-http-access-token')
+    }
+    stages {
+        stage('Tollgate') {
+            steps {
+                sh 'tollgate review --bitbucket-dc --project ${BITBUCKET_PROJECT} --repo ${BITBUCKET_REPO} --pr ${CHANGE_ID}'
+            }
+        }
+    }
+}

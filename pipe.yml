@@ -1,0 +1,11 @@
+name: Tollgate
+image: dockerfile
+description: Review a Bitbucket Cloud pull request. Tollgate never approves.
+repository: tollgate
+category: Utilities
+variables:
+  - name: BITBUCKET_ACCESS_TOKEN
+    description: Repository access token with pull-request write
+  - name: TOLLGATE_MODE
+    default: comment
+entrypoint: tollgate review --bitbucket-cloud

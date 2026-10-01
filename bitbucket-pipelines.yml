@@ -1,0 +1,12 @@
+clone:
+  depth: full
+
+pipelines:
+  pull-requests:
+    "**":
+      - step:
+          name: Tollgate
+          script:
+            - pipe: docker://localhost/tollgate:local
+              variables:
+                BITBUCKET_ACCESS_TOKEN: $BITBUCKET_ACCESS_TOKEN

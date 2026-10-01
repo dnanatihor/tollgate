@@ -24,6 +24,7 @@ from tollgate.planner import build_plan, render_plan
 from tollgate.rank import Ranked, rank_findings
 from tollgate.render.sarif import render_sarif
 from tollgate.render.summary import render_json, render_markdown
+from tollgate.scm.bitbucket_cloud import BitbucketCloudProvider
 from tollgate.scm.github import GitHubProvider, checkout_mode, is_fork_event
 from tollgate.sources.local_git import load_local_git
 from tollgate.standards import load_catalogs, render_standards_list
@@ -67,6 +68,11 @@ def review(
     base: str = typer.Option("main", "--base", help="Base ref whose configuration is loaded."),
     head: str = typer.Option("HEAD", "--head", help="Head ref to diff against the merge base."),
     github: bool = typer.Option(False, "--github", help="Review the GitHub pull request in CI."),
+    bitbucket_cloud: bool = typer.Option(
+        False,
+        "--bitbucket-cloud",
+        help="Review the Bitbucket Cloud pull request in Pipelines.",
+    ),
     dry_run: bool = typer.Option(
         False,
         "--dry-run",
@@ -77,7 +83,9 @@ def review(
     """Review a local checkout. Use --dry-run to skip the model."""
     if github:
         _github_preflight()
-    elif not local:
+    if bitbucket_cloud:
+        _bitbucket_preflight()
+    if not local and not github and not bitbucket_cloud:
         raise ConfigError("mode", "review requires --local until a platform mode is implemented")
     if report_format not in {"md", "json", "sarif"}:
         raise ConfigError("format", "format must be md, json, or sarif")
@@ -118,6 +126,8 @@ def review(
         _emit(report_format, ranked, verdict, analysis.coverage)
         if github:
             _publish_github(ranked, verdict, loaded.tollgate.fingerprint(), loaded.tollgate.mode)
+        if bitbucket_cloud:
+            _publish_bitbucket(ranked, verdict, loaded.tollgate.fingerprint())
         return
     try:
         outcome = asyncio.run(
@@ -141,6 +151,8 @@ def review(
     _emit(report_format, merged, verdict, analysis.coverage)
     if github:
         _publish_github(merged, verdict, loaded.tollgate.fingerprint(), loaded.tollgate.mode)
+    if bitbucket_cloud:
+        _publish_bitbucket(merged, verdict, loaded.tollgate.fingerprint())
     if loaded.tollgate.mode != "comment" and verdict.outcome == "block":
         raise SystemExit(1)
 
@@ -197,6 +209,54 @@ def _mapping(value: Any, key: str) -> dict[str, Any]:
     if not isinstance(value, dict):
         raise ConfigError("github", f"event is missing {key}")
     return value
+
+
+def _bitbucket_preflight() -> None:
+    missing = [
+        name
+        for name in (
+            "BITBUCKET_WORKSPACE",
+            "BITBUCKET_REPO_SLUG",
+            "BITBUCKET_PR_ID",
+            "BITBUCKET_COMMIT",
+            "BITBUCKET_ACCESS_TOKEN",
+        )
+        if not os.environ.get(name)
+    ]
+    if missing:
+        raise ConfigError("bitbucket", f"missing {missing[0]}")
+
+
+def _publish_bitbucket(ranked: Ranked, verdict: Verdict, config_hash: str) -> None:
+    workspace = os.environ["BITBUCKET_WORKSPACE"]
+    repo = os.environ["BITBUCKET_REPO_SLUG"]
+    number = os.environ["BITBUCKET_PR_ID"]
+    commit = os.environ["BITBUCKET_COMMIT"]
+    token = os.environ["BITBUCKET_ACCESS_TOKEN"]
+    insights = os.environ.get("TOLLGATE_INSIGHTS_URL", "https://api.bitbucket.org/2.0")
+    if os.environ.get("BITBUCKET_BUILD_NUMBER") and "TOLLGATE_INSIGHTS_URL" not in os.environ:
+        insights = "http://localhost:29418"
+    markdown = render_markdown(ranked, verdict)
+
+    async def publish() -> None:
+        headers = {"Authorization": f"Bearer {token}"}
+        async with httpx.AsyncClient(headers=headers) as client:
+            provider = BitbucketCloudProvider(
+                client,
+                workspace=workspace,
+                repo=repo,
+                insights_base=insights,
+            )
+            await provider.publish(
+                number=number,
+                commit=commit,
+                findings=ranked.findings,
+                verdict=verdict,
+                markdown=markdown,
+                config_hash=config_hash,
+            )
+
+    asyncio.run(publish())
 
 
 def _github_preflight() -> None:

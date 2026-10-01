@@ -1,0 +1,19 @@
+[
+  {
+    "findings": [
+      {
+        "title": "llm rag",
+        "severity": "high",
+        "confidence": "high",
+        "start_line": 2,
+        "end_line": 2,
+        "evidence": "    return index.search(q, filter=None)",
+        "explanation": "The changed line introduces this issue.",
+        "recommendation": "Replace the changed line with a safe alternative.",
+        "standards": [
+          "OWASP-LLM-2025:LLM08"
+        ]
+      }
+    ]
+  }
+]

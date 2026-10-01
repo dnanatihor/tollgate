@@ -57,10 +57,13 @@ packages = ["src/tollgate"]
 target-version = "py311"
 line-length = 100
 src = ["src", "tests"]
-extend-exclude = ["SPEC.md"]
+extend-exclude = ["SPEC.md", "eval/cases"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
+
+[tool.ruff.lint.per-file-ignores]
+"eval/build_cases.py" = ["E501"]
 
 [tool.mypy]
 python_version = "3.11"

@@ -1,0 +1,3 @@
+lens: security
+expect:
+  - {standards_any: ["CWE-502"], file: app/decode.py, lines: [2, 2], min_severity: high}

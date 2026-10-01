@@ -1,0 +1,3 @@
+lens: llm_security
+expect:
+  - {standards_any: ["OWASP-LLM-2025:LLM03"], file: app/model.py, lines: [2, 2], min_severity: high}

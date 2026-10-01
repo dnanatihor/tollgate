@@ -1,0 +1,6 @@
+--- a/app/files.py
++++ b/app/files.py
+@@ -1,2 +1,2 @@
+ def read(name: str) -> str:
+-    return name
++    return open('/data/' + name).read()

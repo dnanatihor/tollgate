@@ -1,0 +1,6 @@
+--- a/app/async_handler.py
++++ b/app/async_handler.py
+@@ -1,2 +1,3 @@
+ async def handle() -> str:
++    time.sleep(2)
+     return 'ok'

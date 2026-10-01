@@ -1,0 +1,5 @@
+deterministic: true
+lens: security
+expect: []
+must_not:
+  - {min_severity: medium}

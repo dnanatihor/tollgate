@@ -1,0 +1,19 @@
+[
+  {
+    "findings": [
+      {
+        "title": "sec cors",
+        "severity": "high",
+        "confidence": "high",
+        "start_line": 2,
+        "end_line": 2,
+        "evidence": "    return {'Access-Control-Allow-Origin': '*'}",
+        "explanation": "The changed line introduces this issue.",
+        "recommendation": "Replace the changed line with a safe alternative.",
+        "standards": [
+          "OWASP-WEB-2025:A02"
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,6 @@
+--- a/app/model.py
++++ b/app/model.py
+@@ -1,2 +1,2 @@
+ def load() -> str:
+-    return 'ok'
++    return AutoModel.from_pretrained('org/model', trust_remote_code=True)

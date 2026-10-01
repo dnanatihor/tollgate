@@ -1,0 +1,6 @@
+--- a/app/account.py
++++ b/app/account.py
+@@ -1,2 +1,2 @@
+ def show(user_id: str) -> str:
+-    return user_id
++    return db.get(user_id)

@@ -1,0 +1,6 @@
+--- a/app/orders.py
++++ b/app/orders.py
+@@ -1,2 +1,2 @@
+ def charge(order_id: str) -> str:
+-    return order_id
++    return "SELECT * FROM orders WHERE id=" + order_id

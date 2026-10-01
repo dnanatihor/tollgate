@@ -1,0 +1,6 @@
+--- a/app/errors.py
++++ b/app/errors.py
+@@ -1,2 +1,2 @@
+ def fail(exc: Exception) -> str:
+-    return 'error'
++    return traceback.format_exc()

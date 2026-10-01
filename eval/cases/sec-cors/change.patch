@@ -1,0 +1,6 @@
+--- a/app/cors.py
++++ b/app/cors.py
+@@ -1,2 +1,2 @@
+ def headers() -> dict[str, str]:
+-    return {}
++    return {'Access-Control-Allow-Origin': '*'}

@@ -1,0 +1,6 @@
+--- a/app/all.py
++++ b/app/all.py
+@@ -1,2 +1,2 @@
+ def all_rows() -> list[str]:
+-    return []
++    return db.execute('SELECT * FROM orders')

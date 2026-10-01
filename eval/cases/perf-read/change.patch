@@ -1,0 +1,6 @@
+--- a/app/stream.py
++++ b/app/stream.py
+@@ -1,2 +1,2 @@
+ def body(path: str) -> str:
+-    return path
++    return Path(path).read_text()

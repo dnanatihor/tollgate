@@ -1,0 +1,3 @@
+lens: architecture
+expect:
+  - {standards_any: ["TG-ARCH-008"], file: app/endpoint.py, lines: [2, 2], min_severity: high}

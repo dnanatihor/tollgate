@@ -1,0 +1,19 @@
+[
+  {
+    "findings": [
+      {
+        "title": "sec log",
+        "severity": "high",
+        "confidence": "high",
+        "start_line": 2,
+        "end_line": 2,
+        "evidence": "    logging.info('user payload %s', user)",
+        "explanation": "The changed line introduces this issue.",
+        "recommendation": "Replace the changed line with a safe alternative.",
+        "standards": [
+          "OWASP-WEB-2025:A09"
+        ]
+      }
+    ]
+  }
+]

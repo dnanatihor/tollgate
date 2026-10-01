@@ -1,0 +1,19 @@
+[
+  {
+    "findings": [
+      {
+        "title": "perf sleep",
+        "severity": "high",
+        "confidence": "high",
+        "start_line": 2,
+        "end_line": 2,
+        "evidence": "    time.sleep(2)",
+        "explanation": "The changed line introduces this issue.",
+        "recommendation": "Replace the changed line with a safe alternative.",
+        "standards": [
+          "TG-PERF-003"
+        ]
+      }
+    ]
+  }
+]

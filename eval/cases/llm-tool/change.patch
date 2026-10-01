@@ -1,0 +1,6 @@
+--- a/app/tool.py
++++ b/app/tool.py
+@@ -1,2 +1,2 @@
+ def act() -> str:
+-    return 'ok'
++    return delete_records(confirmed=False)

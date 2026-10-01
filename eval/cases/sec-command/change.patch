@@ -1,0 +1,6 @@
+--- a/app/shell.py
++++ b/app/shell.py
+@@ -1,2 +1,3 @@
+ def run(name: str) -> str:
++    os.system('ls ' + name)
+     return name

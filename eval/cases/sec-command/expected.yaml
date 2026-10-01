@@ -1,0 +1,3 @@
+lens: security
+expect:
+  - {standards_any: ["CWE-78"], file: app/shell.py, lines: [2, 2], min_severity: high}

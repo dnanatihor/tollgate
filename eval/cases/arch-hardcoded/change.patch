@@ -1,0 +1,6 @@
+--- a/app/env.py
++++ b/app/env.py
+@@ -1,2 +1,2 @@
+ def host() -> str:
+-    return 'localhost'
++    return 'https://billing.internal.example'

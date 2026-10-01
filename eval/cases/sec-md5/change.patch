@@ -1,0 +1,6 @@
+--- a/app/hash.py
++++ b/app/hash.py
+@@ -1,2 +1,2 @@
+ def digest(value: bytes) -> bytes:
+-    return value
++    return hashlib.md5(value).digest()

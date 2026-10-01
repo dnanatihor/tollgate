@@ -1,0 +1,21 @@
+name: nightly
+
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@v5
+      - name: Install
+        run: uv sync --frozen
+      - name: Scripted eval
+        run: uv run python eval/harness.py
+      # A second model comparison needs provider keys. Until those are stored
+      # as repository secrets, the nightly report is the scripted model.

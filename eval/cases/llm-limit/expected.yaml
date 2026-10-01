@@ -1,0 +1,3 @@
+lens: llm_security
+expect:
+  - {standards_any: ["OWASP-LLM-2025:LLM10"], file: app/chat.py, lines: [2, 2], min_severity: high}

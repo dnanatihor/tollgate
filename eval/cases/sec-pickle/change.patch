@@ -1,0 +1,6 @@
+--- a/app/decode.py
++++ b/app/decode.py
+@@ -1,2 +1,2 @@
+ def load(blob: bytes) -> str:
+-    return blob.decode()
++    return pickle.loads(blob)

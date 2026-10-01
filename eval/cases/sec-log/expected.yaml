@@ -1,0 +1,3 @@
+lens: security
+expect:
+  - {standards_any: ["OWASP-WEB-2025:A09"], file: app/audit.py, lines: [2, 2], min_severity: high}

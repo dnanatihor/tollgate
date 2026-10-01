@@ -1,0 +1,6 @@
+--- a/app/list.py
++++ b/app/list.py
+@@ -1,2 +1,2 @@
+ def names(users: list[str]) -> list[str]:
+-    return users
++    return [db.query(user) for user in users]

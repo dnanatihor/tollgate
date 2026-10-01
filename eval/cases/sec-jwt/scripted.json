@@ -1,0 +1,19 @@
+[
+  {
+    "findings": [
+      {
+        "title": "sec jwt",
+        "severity": "high",
+        "confidence": "high",
+        "start_line": 2,
+        "end_line": 2,
+        "evidence": "    return jwt.decode(token, options={'verify_signature': False})",
+        "explanation": "The changed line introduces this issue.",
+        "recommendation": "Replace the changed line with a safe alternative.",
+        "standards": [
+          "OWASP-WEB-2025:A07"
+        ]
+      }
+    ]
+  }
+]

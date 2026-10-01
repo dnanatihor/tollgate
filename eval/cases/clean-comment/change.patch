@@ -1,0 +1,6 @@
+--- a/app/note.py
++++ b/app/note.py
+@@ -1,2 +1,3 @@
+ def ready() -> bool:
++    # saved after the review comment
+     return True

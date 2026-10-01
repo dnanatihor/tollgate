@@ -1,0 +1,19 @@
+[
+  {
+    "findings": [
+      {
+        "title": "sec path",
+        "severity": "high",
+        "confidence": "high",
+        "start_line": 2,
+        "end_line": 2,
+        "evidence": "    return open('/data/' + name).read()",
+        "explanation": "The changed line introduces this issue.",
+        "recommendation": "Replace the changed line with a safe alternative.",
+        "standards": [
+          "CWE-22"
+        ]
+      }
+    ]
+  }
+]

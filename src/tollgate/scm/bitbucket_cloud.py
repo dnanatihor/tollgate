@@ -121,9 +121,7 @@ class BitbucketCloudProvider:
         return posted
 
     def _pr(self, number: str, suffix: str) -> str:
-        return (
-            f"{_API}/repositories/{self.workspace}/{self.repo}/pullrequests/{number}/{suffix}"
-        )
+        return f"{_API}/repositories/{self.workspace}/{self.repo}/pullrequests/{number}/{suffix}"
 
     async def _find_summary(self, number: str) -> int | None:
         payload = await self._json("GET", self._pr(number, "comments"))

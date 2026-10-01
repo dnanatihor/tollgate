@@ -1,0 +1,6 @@
+--- a/app/system.py
++++ b/app/system.py
+@@ -1,2 +1,2 @@
+ def prompt() -> str:
+-    return 'help'
++    return 'system credential sk-live-demo'

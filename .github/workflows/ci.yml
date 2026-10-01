@@ -22,3 +22,16 @@ jobs:
         run: uv run mypy
       - name: Test
         run: uv run pytest
+  quickstart:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@v5
+      - name: Install
+        run: uv sync --frozen
+      - name: List standards
+        run: uv run tollgate standards list
+      - name: Dry-run the local review
+        run: uv run tollgate review --local --base main --dry-run

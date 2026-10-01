@@ -1,0 +1,11 @@
+lenses:
+  security: false
+  llm_security: true
+  architecture: false
+  performance: false
+critic:
+  enabled: false
+analyzers:
+  semgrep: "off"
+  gitleaks: "off"
+  osv: "off"

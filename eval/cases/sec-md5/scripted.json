@@ -1,0 +1,19 @@
+[
+  {
+    "findings": [
+      {
+        "title": "sec md5",
+        "severity": "high",
+        "confidence": "high",
+        "start_line": 2,
+        "end_line": 2,
+        "evidence": "    return hashlib.md5(value).digest()",
+        "explanation": "The changed line introduces this issue.",
+        "recommendation": "Replace the changed line with a safe alternative.",
+        "standards": [
+          "CWE-327"
+        ]
+      }
+    ]
+  }
+]

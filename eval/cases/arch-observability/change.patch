@@ -1,0 +1,6 @@
+--- a/app/endpoint.py
++++ b/app/endpoint.py
+@@ -1,2 +1,2 @@
+ def serve() -> str:
+-    return 'ok'
++    return store.save()

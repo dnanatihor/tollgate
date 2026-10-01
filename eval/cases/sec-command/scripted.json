@@ -1,0 +1,19 @@
+[
+  {
+    "findings": [
+      {
+        "title": "sec command",
+        "severity": "high",
+        "confidence": "high",
+        "start_line": 2,
+        "end_line": 2,
+        "evidence": "    os.system('ls ' + name)",
+        "explanation": "The changed line introduces this issue.",
+        "recommendation": "Replace the changed line with a safe alternative.",
+        "standards": [
+          "CWE-78"
+        ]
+      }
+    ]
+  }
+]

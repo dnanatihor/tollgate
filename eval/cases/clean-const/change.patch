@@ -1,0 +1,5 @@
+--- a/app/const.py
++++ b/app/const.py
+@@ -1 +1 @@
+-LIMIT = 10
++LIMIT = 20

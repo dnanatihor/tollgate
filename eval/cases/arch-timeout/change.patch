@@ -1,0 +1,6 @@
+--- a/app/client.py
++++ b/app/client.py
+@@ -1,2 +1,2 @@
+ def call(url: str) -> str:
+-    return url
++    return httpx.get(url).text

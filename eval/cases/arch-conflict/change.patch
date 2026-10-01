@@ -1,0 +1,6 @@
+--- a/app/sync.py
++++ b/app/sync.py
+@@ -1,2 +1,2 @@
+ def notify() -> str:
+-    return 'ok'
++    return other_service.get('/charges')

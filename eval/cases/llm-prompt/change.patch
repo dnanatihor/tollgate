@@ -1,0 +1,6 @@
+--- a/app/prompt.py
++++ b/app/prompt.py
+@@ -1,2 +1,2 @@
+ def ask(user: str) -> str:
+-    return user
++    return client.complete(system + user)

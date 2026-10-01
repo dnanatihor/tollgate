@@ -1,0 +1,6 @@
+--- a/app/rag.py
++++ b/app/rag.py
+@@ -1,2 +1,2 @@
+ def search(q: str) -> str:
+-    return q
++    return index.search(q, filter=None)

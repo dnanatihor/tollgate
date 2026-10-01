@@ -1,0 +1,3 @@
+lens: architecture
+expect:
+  - {standards_any: ["TG-ARCH-004"], file: app/sync.py, lines: [2, 2], min_severity: high}

@@ -1,0 +1,6 @@
+--- a/app/chat.py
++++ b/app/chat.py
+@@ -1,2 +1,2 @@
+ def call() -> str:
+-    return 'ok'
++    return client.generate(timeout=None)

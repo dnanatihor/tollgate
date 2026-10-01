@@ -1,0 +1,6 @@
+--- a/app/sink.py
++++ b/app/sink.py
+@@ -1,2 +1,2 @@
+ def apply(text: str) -> str:
+-    return text
++    return eval(model_output)

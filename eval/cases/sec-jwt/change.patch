@@ -1,0 +1,6 @@
+--- a/app/jwt.py
++++ b/app/jwt.py
+@@ -1,2 +1,2 @@
+ def check(token: str) -> str:
+-    return token
++    return jwt.decode(token, options={'verify_signature': False})

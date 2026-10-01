@@ -1,0 +1,24 @@
+{
+  "model": "scripted:test",
+  "seeded": 37,
+  "clean": 10,
+  "recall_by_lens": {
+    "architecture": 1.0,
+    "llm_security": 1.0,
+    "performance": 1.0,
+    "security": 1.0
+  },
+  "precision_by_lens": {
+    "architecture": 0.9090909090909091,
+    "llm_security": 1.0,
+    "performance": 1.0,
+    "security": 1.0
+  },
+  "clean_false_positives": 0,
+  "inline_comments_per_pr": 0,
+  "cost_usd_per_pr": 0,
+  "critic": {
+    "note": "Default stays on for high and above. A rejected finding is dismissed and cannot block; see tests/test_critic.py.",
+    "default_enabled": true
+  }
+}

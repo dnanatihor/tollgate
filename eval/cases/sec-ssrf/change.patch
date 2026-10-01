@@ -1,0 +1,6 @@
+--- a/app/fetch.py
++++ b/app/fetch.py
+@@ -1,2 +1,2 @@
+ def load(url: str) -> str:
+-    return url
++    return requests.get(url).text

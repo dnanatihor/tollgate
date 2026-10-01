@@ -1,0 +1,6 @@
+--- a/app/match.py
++++ b/app/match.py
+@@ -1,2 +1,2 @@
+ def match(value: str) -> bool:
+-    return False
++    return bool(re.match(r'(a+)+$', value))

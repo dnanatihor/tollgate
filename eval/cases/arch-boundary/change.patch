@@ -1,0 +1,6 @@
+--- a/app/export.py
++++ b/app/export.py
+@@ -1,2 +1,2 @@
+ def send(row: dict[str, str]) -> str:
+-    return 'ok'
++    return partner.post(row['restricted'])

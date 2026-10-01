@@ -1,0 +1,6 @@
+--- a/app/scan.py
++++ b/app/scan.py
+@@ -1,2 +1,2 @@
+ def has(items: list[str], other: list[str]) -> bool:
+-    return False
++    return any(item in other for item in items)

@@ -1,0 +1,6 @@
+--- a/app/typed.py
++++ b/app/typed.py
+@@ -1,2 +1,2 @@
+-def length(value):
++def length(value: str) -> int:
+     return len(value)

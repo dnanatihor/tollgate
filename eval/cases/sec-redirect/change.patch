@@ -1,0 +1,6 @@
+--- a/app/redirect.py
++++ b/app/redirect.py
+@@ -1,2 +1,2 @@
+ def go(url: str) -> str:
+-    return url
++    return redirect(request.args['next'])

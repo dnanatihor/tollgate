@@ -1,0 +1,6 @@
+--- a/app/copy.py
++++ b/app/copy.py
+@@ -1,2 +1,2 @@
+ def copy(items: list[str]) -> list[str]:
+-    return items
++    return list(items)

@@ -1,0 +1,3 @@
+lens: performance
+expect:
+  - {standards_any: ["TG-PERF-002"], file: app/all.py, lines: [2, 2], min_severity: high}

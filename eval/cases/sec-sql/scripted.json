@@ -1,0 +1,19 @@
+[
+  {
+    "findings": [
+      {
+        "title": "sec sql",
+        "severity": "high",
+        "confidence": "high",
+        "start_line": 2,
+        "end_line": 2,
+        "evidence": "    return \"SELECT * FROM orders WHERE id=\" + order_id",
+        "explanation": "The changed line introduces this issue.",
+        "recommendation": "Replace the changed line with a safe alternative.",
+        "standards": [
+          "CWE-89"
+        ]
+      }
+    ]
+  }
+]

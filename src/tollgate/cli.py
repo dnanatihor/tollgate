@@ -14,10 +14,18 @@ import yaml
 
 from tollgate.analyzers.run import analyze
 from tollgate.classify import classify_changes
-from tollgate.config import load_config, organisation_ids, parse_architecture_document
+from tollgate.config import (
+    TollgateConfig,
+    load_config,
+    organisation_ids,
+    parse_architecture_document,
+)
+from tollgate.critic import apply_critic
 from tollgate.diff import parse_unified_diff
 from tollgate.errors import ConfigError
 from tollgate.llm.client import ModelUnreachable, RoleName, chat_for, probe_role
+from tollgate.llm.scripted import ScriptedChat
+from tollgate.llm.structured import ChatBackend
 from tollgate.models import Finding, Verdict
 from tollgate.pipeline import review_plan
 from tollgate.planner import build_plan, render_plan
@@ -143,23 +151,31 @@ def review(
             _publish_dc(ranked, verdict, loaded.tollgate.fingerprint(), project, repo, pr_id)
         return
     try:
-        outcome = asyncio.run(
-            review_plan(
-                plan,
-                config=loaded.tollgate,
-                model=chat_for(loaded.tollgate, "review"),
-                file_texts=sources,
-                cache_dir=Path.cwd() / ".tollgate_cache",
-                organisation=organisation_ids(loaded.architecture),
+        if any(unit.lenses for unit in plan.units):
+            model = _review_model(loaded.tollgate)
+            outcome = asyncio.run(
+                review_plan(
+                    plan,
+                    config=loaded.tollgate,
+                    model=model,
+                    file_texts=sources,
+                    cache_dir=Path.cwd() / ".tollgate_cache",
+                    organisation=organisation_ids(loaded.architecture),
+                )
             )
-        )
+            criticised = asyncio.run(
+                apply_critic(
+                    [*outcome.ranked.findings, *analysis.findings],
+                    model=model,
+                    config=loaded.tollgate,
+                )
+            )
+        else:
+            criticised = list(analysis.findings)
     except ModelUnreachable as exc:
         typer.echo(str(exc), err=True)
         raise SystemExit(3) from None
-    merged = rank_findings(
-        [*outcome.ranked.findings, *analysis.findings],
-        loaded.tollgate,
-    )
+    merged = rank_findings(criticised, loaded.tollgate)
     verdict = decide(list(merged.findings), loaded.tollgate)
     _emit(report_format, merged, verdict, analysis.coverage)
     if github:
@@ -170,6 +186,17 @@ def review(
         _publish_dc(merged, verdict, loaded.tollgate.fingerprint(), project, repo, pr_id)
     if loaded.tollgate.mode != "comment" and verdict.outcome == "block":
         raise SystemExit(1)
+
+
+def _review_model(config: TollgateConfig) -> ChatBackend:
+    path = os.environ.get("TOLLGATE_SCRIPTED")
+    if not path:
+        return chat_for(config, "review")
+    loaded = json.loads(Path(path).read_text(encoding="utf-8"))
+    if not isinstance(loaded, list):
+        raise ConfigError("TOLLGATE_SCRIPTED", "replies must be a JSON list")
+    replies = [item if isinstance(item, str) else json.dumps(item) for item in loaded]
+    return ScriptedChat(replies)
 
 
 def _publish_github(ranked: Ranked, verdict: Verdict, config_hash: str, mode: str) -> None:

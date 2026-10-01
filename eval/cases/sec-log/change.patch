@@ -1,0 +1,6 @@
+--- a/app/audit.py
++++ b/app/audit.py
+@@ -1,2 +1,3 @@
+ def record(user: str) -> str:
++    logging.info('user payload %s', user)
+     return user

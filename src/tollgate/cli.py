@@ -7,8 +7,12 @@ from pathlib import Path
 import typer
 import yaml
 
+from tollgate.classify import classify_changes
 from tollgate.config import load_config, organisation_ids, parse_architecture_document
+from tollgate.diff import parse_unified_diff
 from tollgate.errors import ConfigError
+from tollgate.planner import build_plan, render_plan
+from tollgate.sources.local_git import load_local_git
 from tollgate.standards import load_catalogs, render_standards_list
 
 app = typer.Typer(no_args_is_help=True, add_completion=False)
@@ -45,12 +49,35 @@ def standards_list(
 def review(
     local: bool = typer.Option(False, "--local", help="Review a local git repository."),
     base: str = typer.Option("main", "--base", help="Base ref whose configuration is loaded."),
+    head: str = typer.Option("HEAD", "--head", help="Head ref to diff against the merge base."),
+    dry_run: bool = typer.Option(
+        False,
+        "--dry-run",
+        help="Print review units and estimates without calling a model.",
+    ),
 ) -> None:
-    """Load configuration from the base ref. The review pipeline starts in Phase 1."""
+    """Review a local checkout. Lens calls start in Phase 2."""
     if not local:
         raise ConfigError("mode", "review requires --local until a platform mode is implemented")
     loaded = load_config(Path.cwd(), base_ref=base)
     typer.echo(f"configuration ok ({loaded.base_sha[:12]})")
+    if not dry_run:
+        return
+    snapshot = load_local_git(Path.cwd(), base_ref=base, head_ref=head)
+    diff_files = parse_unified_diff(snapshot.diff_text)
+    sources = {
+        item.path: snapshot.read_text(item.path, snapshot.head_sha)
+        for item in diff_files
+        if item.status != "deleted"
+    }
+    classified = classify_changes(
+        diff_files,
+        config=loaded.tollgate,
+        attributes=snapshot.gitattributes(),
+        sources=sources,
+    )
+    plan = build_plan(classified, loaded.tollgate)
+    typer.echo(render_plan(plan), nl=False)
 
 
 def main() -> None:

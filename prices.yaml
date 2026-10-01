@@ -1,0 +1,5 @@
+# Hand-maintained input prices in USD per million tokens, for dry-run estimates.
+# These are planning figures, not an invoice.
+models:
+  openai:gpt-4.1-mini: 0.40
+  anthropic:claude-sonnet-4-5: 3.00

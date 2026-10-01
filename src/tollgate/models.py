@@ -86,6 +86,8 @@ class ReviewUnit(_Frozen):
     llm_signals: tuple[str, ...] = ()
     annotated_hunks: str = ""
     structural_context: str = ""
+    lenses: tuple[str, ...] = ()
+    estimated_tokens: int = 0
 
 
 class Finding(_Frozen):

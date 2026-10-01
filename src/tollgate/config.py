@@ -108,6 +108,8 @@ class LLMSettings(_Model):
     budget: LLMBudget = LLMBudget()
     local_only: bool = False
     allowed_providers: list[str] = []
+    # Extra SDK or framework names that count as LLM signals, beyond the built-in list.
+    extra_sdk_signals: list[str] = []
 
 
 class TollgateConfig(_Model):

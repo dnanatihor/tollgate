@@ -1,0 +1,10 @@
+layers: []
+tech_radar:
+  hold: []
+  assess: []
+significance_triggers:
+  new_datastore: true
+  new_dependency: false
+  new_public_endpoint: false
+docs:
+  adr: ["docs/adr/**/*.md"]

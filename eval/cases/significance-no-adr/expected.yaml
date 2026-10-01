@@ -1,0 +1,4 @@
+lens: architecture
+language: python
+expect:
+  - {standards_any: ["TG-ARCH-003"], file: app/db.py, lines: [2, 2], min_severity: medium}

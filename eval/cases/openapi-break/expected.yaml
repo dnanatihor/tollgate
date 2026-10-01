@@ -1,0 +1,4 @@
+lens: architecture
+language: yaml
+expect:
+  - {standards_any: ["TG-ARCH-006"], file: api.yaml, lines: [1, 7], min_severity: high}

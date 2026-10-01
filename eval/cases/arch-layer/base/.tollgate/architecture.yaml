@@ -1,0 +1,8 @@
+layers:
+  - {name: domain, paths: ["src/*/domain/**"], may_depend_on: []}
+  - {name: infrastructure, paths: ["src/*/infrastructure/**"], may_depend_on: [domain]}
+tech_radar:
+  hold: ["moment"]
+  assess: ["some-new-orm"]
+docs:
+  adr: ["docs/adr/**/*.md"]

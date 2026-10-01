@@ -1,0 +1,7 @@
+layers: []
+tech_radar:
+  hold: []
+significance_triggers:
+  new_dependency: false
+docs:
+  adr: ["docs/adr/**/*.md"]

@@ -1,0 +1,4 @@
+lens: security
+language: text
+expect:
+  - {standards_any: ["OWASP-WEB-2025:A03"], file: requirements.txt, lines: [2, 2], min_severity: high}

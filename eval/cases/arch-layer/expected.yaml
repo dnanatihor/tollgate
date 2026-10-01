@@ -1,0 +1,4 @@
+lens: architecture
+language: python
+expect:
+  - {standards_any: ["TG-ARCH-001"], file: src/billing/domain/order.py, lines: [1, 1], min_severity: high}

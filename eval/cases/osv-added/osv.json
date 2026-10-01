@@ -1,0 +1,17 @@
+{
+  "results": [
+    {
+      "source": {"path": "requirements.txt"},
+      "packages": [
+        {
+          "package": {"name": "flask", "version": "0.12.2"},
+          "vulnerabilities": [{"id": "GHSA-example", "summary": "example"}]
+        },
+        {
+          "package": {"name": "requests", "version": "2.0.0"},
+          "vulnerabilities": [{"id": "GHSA-ignored", "summary": "unchanged dependency"}]
+        }
+      ]
+    }
+  ]
+}

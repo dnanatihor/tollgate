@@ -1,0 +1,6 @@
+layers: []
+tech_radar:
+  hold: ["moment", "log4j:1.*"]
+  assess: ["some-new-orm"]
+docs:
+  adr: ["docs/adr/**/*.md"]

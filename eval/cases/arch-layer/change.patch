@@ -1,0 +1,7 @@
+diff --git a/src/billing/domain/order.py b/src/billing/domain/order.py
+--- a/src/billing/domain/order.py
++++ b/src/billing/domain/order.py
+@@ -1,2 +1,3 @@
++from src.billing.infrastructure.db import Engine
+ def order() -> int:
+     return 1

@@ -8,6 +8,7 @@ from pathlib import Path
 import typer
 import yaml
 
+from tollgate.analyzers.run import analyze
 from tollgate.classify import classify_changes
 from tollgate.config import load_config, organisation_ids, parse_architecture_document
 from tollgate.diff import parse_unified_diff
@@ -16,11 +17,12 @@ from tollgate.llm.client import ModelUnreachable, RoleName, chat_for, probe_role
 from tollgate.models import Finding, Verdict
 from tollgate.pipeline import review_plan
 from tollgate.planner import build_plan, render_plan
-from tollgate.rank import Ranked
+from tollgate.rank import Ranked, rank_findings
 from tollgate.render.sarif import render_sarif
 from tollgate.render.summary import render_json, render_markdown
 from tollgate.sources.local_git import load_local_git
 from tollgate.standards import load_catalogs, render_standards_list
+from tollgate.verdict import decide
 
 app = typer.Typer(no_args_is_help=True, add_completion=False)
 standards_app = typer.Typer(no_args_is_help=True, add_completion=False)
@@ -90,9 +92,22 @@ def review(
     if dry_run:
         typer.echo(render_plan(plan), nl=False)
         return
+    base_texts = {
+        item.path: snapshot.read_text(item.path, snapshot.merge_base)
+        for item in diff_files
+        if item.status != "deleted"
+    }
+    analysis = analyze(
+        diff_files,
+        head_texts=sources,
+        base_texts=base_texts,
+        architecture=loaded.architecture,
+        config=loaded.tollgate,
+    )
     if not plan.units:
-        empty = Ranked(findings=(), inline=(), summary_only=())
-        _emit(report_format, empty, Verdict(outcome="pass"))
+        ranked = rank_findings(list(analysis.findings), loaded.tollgate)
+        verdict = decide(list(ranked.findings), loaded.tollgate)
+        _emit(report_format, ranked, verdict, analysis.coverage)
         return
     try:
         outcome = asyncio.run(
@@ -108,19 +123,29 @@ def review(
     except ModelUnreachable as exc:
         typer.echo(str(exc), err=True)
         raise SystemExit(3) from None
-    _emit(report_format, outcome.ranked, outcome.verdict)
-    if loaded.tollgate.mode != "comment" and outcome.verdict.outcome == "block":
+    merged = rank_findings(
+        [*outcome.ranked.findings, *analysis.findings],
+        loaded.tollgate,
+    )
+    verdict = decide(list(merged.findings), loaded.tollgate)
+    _emit(report_format, merged, verdict, analysis.coverage)
+    if loaded.tollgate.mode != "comment" and verdict.outcome == "block":
         raise SystemExit(1)
 
 
-def _emit(report_format: str, ranked: Ranked, verdict: Verdict) -> None:
+def _emit(
+    report_format: str,
+    ranked: Ranked,
+    verdict: Verdict,
+    coverage: tuple[object, ...] = (),
+) -> None:
     findings: list[Finding] = list(ranked.findings)
     if report_format == "json":
         typer.echo(render_json(findings, verdict), nl=False)
     elif report_format == "sarif":
         typer.echo(render_sarif(findings, verdict), nl=False)
     else:
-        typer.echo(render_markdown(ranked, verdict), nl=False)
+        typer.echo(render_markdown(ranked, verdict, coverage), nl=False)
 
 
 @models_app.command("check")

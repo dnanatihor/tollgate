@@ -1,0 +1,4 @@
+lens: architecture
+language: sql
+expect:
+  - {standards_any: ["TG-ARCH-006"], file: db/V003__drop_email.sql, lines: [1, 1], min_severity: high}

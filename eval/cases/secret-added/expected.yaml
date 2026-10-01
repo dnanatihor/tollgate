@@ -1,0 +1,4 @@
+lens: security
+language: python
+expect:
+  - {standards_any: ["OWASP-WEB-2025:A04"], file: app/settings.py, lines: [2, 2], min_severity: critical}

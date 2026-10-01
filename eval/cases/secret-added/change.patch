@@ -1,0 +1,7 @@
+diff --git a/app/settings.py b/app/settings.py
+new file mode 100644
+--- /dev/null
++++ b/app/settings.py
+@@ -0,0 +1,2 @@
++def login() -> str:
++    password = "s3cr3t-value-should-not-leak"

@@ -1,0 +1,7 @@
+diff --git a/app/db.py b/app/db.py
+new file mode 100644
+--- /dev/null
++++ b/app/db.py
+@@ -0,0 +1,2 @@
++def connect() -> str:
++    return "postgresql://orders"

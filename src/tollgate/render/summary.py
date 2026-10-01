@@ -8,7 +8,11 @@ from tollgate.models import Finding, Verdict
 from tollgate.rank import Ranked
 
 
-def render_markdown(ranked: Ranked, verdict: Verdict) -> str:
+def render_markdown(
+    ranked: Ranked,
+    verdict: Verdict,
+    coverage: tuple[object, ...] = (),
+) -> str:
     lines = [
         "# Tollgate",
         "",
@@ -36,6 +40,12 @@ def render_markdown(ranked: Ranked, verdict: Verdict) -> str:
                 f"- `{finding.file}:{finding.start_line}` {finding.title} "
                 f"({', '.join(finding.standards)})"
             )
+    if coverage:
+        lines.extend(["", "## Coverage", ""])
+        for note in coverage:
+            analyzer = getattr(note, "analyzer", "analyzer")
+            detail = getattr(note, "detail", "")
+            lines.append(f"- {analyzer}: {detail}")
     return "\n".join(lines) + "\n"
 
 

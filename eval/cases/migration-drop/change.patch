@@ -1,0 +1,6 @@
+diff --git a/db/V003__drop_email.sql b/db/V003__drop_email.sql
+new file mode 100644
+--- /dev/null
++++ b/db/V003__drop_email.sql
+@@ -0,0 +1 @@
++ALTER TABLE orders DROP COLUMN email;

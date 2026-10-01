@@ -1,0 +1,4 @@
+lens: architecture
+language: text
+expect:
+  - {standards_any: ["TG-ARCH-002"], file: requirements.txt, lines: [2, 2], min_severity: high}

@@ -54,6 +54,12 @@ def prompts_directory() -> Path:
     raise FileNotFoundError("prompts directory")
 
 
+def render_named(name: str, values: dict[str, str]) -> tuple[str, str]:
+    text = (prompts_directory() / f"{name}.v1.md").read_text(encoding="utf-8")
+    system, user = _split(text)
+    return _render(system, values), _render(user, values)
+
+
 def render_lens_prompt(
     lens: str,
     unit: ReviewUnit,

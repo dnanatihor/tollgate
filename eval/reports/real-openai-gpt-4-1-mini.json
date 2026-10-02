@@ -4,17 +4,17 @@
   "clean": 10,
   "recall_by_lens": {
     "architecture": 0.5,
-    "llm_security": 0.14285714285714285,
+    "llm_security": 0.42857142857142855,
     "performance": 0.16666666666666666,
-    "security": 0.05555555555555555
+    "security": 0.7777777777777778
   },
   "precision_by_lens": {
     "architecture": 0.625,
-    "llm_security": 0.5,
+    "llm_security": 0.6,
     "performance": 0.5,
-    "security": 1.0
+    "security": 0.7777777777777778
   },
-  "clean_false_positives": 0,
+  "clean_false_positives": 3,
   "inline_comments_per_pr": 0,
   "cost_usd_per_pr": 0,
   "critic": {

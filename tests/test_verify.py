@@ -89,6 +89,26 @@ def test_mismatched_evidence_is_reanchored() -> None:
     assert finding.end_line == 2
 
 
+def test_standard_ids_with_appended_names_are_kept() -> None:
+    finding = verify_finding(
+        _proposed(
+            standards=[
+                "OWASP-WEB-2025:A05 Injection",
+                "CWE-89 Improper Neutralization of Special Elements",
+            ]
+        ),
+        lens="security",
+        path="app/orders.py",
+        annotated=ANNOTATED,
+        file_text=FILE,
+        known_ids=KNOWN,
+        web_prefix="OWASP-WEB-2025:",
+    )
+    assert finding is not None
+    assert finding.standards[0] == "OWASP-WEB-2025:A05"
+    assert "CWE-89" in finding.standards
+
+
 def test_patch_spanning_the_wrong_lines_is_removed() -> None:
     finding = verify_finding(
         _proposed(suggested_patch="line one\nline two\n"),

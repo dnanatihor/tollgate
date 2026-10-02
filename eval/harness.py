@@ -46,9 +46,17 @@ def _cases(root: Path) -> list[Path]:
 
 def _run(repo_root: Path, case: Path, model: str | None) -> dict[str, object]:
     work = Path("/tmp") / "tollgate-eval" / case.name
+    stash = Path("/tmp") / "tollgate-model-cache" / _slug(model or "scripted") / case.name
     if work.exists():
+        existing = work / ".tollgate_cache"
+        if existing.is_dir():
+            if stash.exists():
+                shutil.rmtree(stash)
+            shutil.copytree(existing, stash)
         shutil.rmtree(work)
     shutil.copytree(case / "base", work)
+    if stash.is_dir():
+        shutil.copytree(stash, work / ".tollgate_cache")
     if model:
         _pin_model(work / ".tollgate.yml", model)
     _git(work, "init", "-b", "main")

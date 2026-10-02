@@ -21,3 +21,4 @@ and this project uses [Semantic Versioning](https://semver.org/).
 - Dismissed findings stay in the report, GitHub check annotations are batched at 50, Data Center line types come from the diff, and the PR architecture pass drops unknown paths.
 - `tollgate baseline` and `tollgate eval` exist. Semgrep, gitleaks, and OSV run when installed. Eval cases include TypeScript, Java, Go, and C#.
 - Real-model eval can target `openai:gpt-4.1-mini`. Lens review and the architecture pass share one event loop.
+- A cited standard ID is kept when the model appends the catalog name.

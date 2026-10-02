@@ -95,13 +95,30 @@ def known_ids_from_catalogs(
     return ids
 
 
+def _canonical(raw: str, known: set[str]) -> str | None:
+    """Accept an ID even when the model appends the catalog name."""
+    if raw in known:
+        return raw
+    chosen = ""
+    for known_id in known:
+        if len(known_id) <= len(chosen):
+            continue
+        if raw.startswith(known_id) and raw[len(known_id) : len(known_id) + 1] in {" ", "\t", ":"}:
+            chosen = known_id
+    return chosen or None
+
+
 def _standards(
     raw: list[str],
     lens: LensName,
     known: set[str],
     web_prefix: str,
 ) -> tuple[str, ...]:
-    valid = tuple(item for item in raw if item in known)
+    valid = tuple(
+        item
+        for item in (_canonical(entry, known) for entry in raw)
+        if item is not None
+    )
     prefixes = _PRIMARY[lens]
     if lens == "security":
         prefixes = (web_prefix, "OWASP-API-", "CWE-")

@@ -18,6 +18,8 @@ class Ranked:
     findings: tuple[Finding, ...]
     inline: tuple[Finding, ...]
     summary_only: tuple[Finding, ...]
+    dismissed: tuple[Finding, ...] = ()
+    suppressed_in_pr: tuple[Finding, ...] = ()
 
 
 def dedupe(findings: list[Finding]) -> list[Finding]:
@@ -32,6 +34,14 @@ def dedupe(findings: list[Finding]) -> list[Finding]:
 
 
 def rank_findings(findings: list[Finding], config: TollgateConfig) -> Ranked:
+    dismissed = tuple(
+        item for item in findings if item.status in {"dismissed_by_critic", "dismissed_by_triage"}
+    )
+    suppressed = tuple(
+        item
+        for item in findings
+        if item.status == "suppressed" and item.status_reason == "suppressed in this PR"
+    )
     active = [item for item in dedupe(findings) if item.status == "active"]
     ordered = sorted(active, key=score, reverse=True)
     inline: list[Finding] = []
@@ -44,7 +54,13 @@ def rank_findings(findings: list[Finding], config: TollgateConfig) -> Ranked:
             inline.append(finding)
         else:
             rest.append(finding)
-    return Ranked(findings=tuple(ordered), inline=tuple(inline), summary_only=tuple(rest))
+    return Ranked(
+        findings=tuple(ordered),
+        inline=tuple(inline),
+        summary_only=tuple(rest),
+        dismissed=dismissed,
+        suppressed_in_pr=suppressed,
+    )
 
 
 def score(finding: Finding) -> float:

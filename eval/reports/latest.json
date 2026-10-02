@@ -1,6 +1,6 @@
 {
   "model": "scripted:test",
-  "seeded": 37,
+  "seeded": 41,
   "clean": 10,
   "recall_by_lens": {
     "architecture": 1.0,

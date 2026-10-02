@@ -7,6 +7,7 @@ from collections.abc import Callable
 
 from tollgate.analyzers.contracts import contract_findings
 from tollgate.analyzers.deps import added_dependency_names, dependency_findings
+from tollgate.analyzers.execute import Scanner, execute_scanner
 from tollgate.analyzers.gitleaks import parse_gitleaks
 from tollgate.analyzers.layers import layer_findings
 from tollgate.analyzers.notes import Analysis, CoverageNote, binary_note
@@ -31,6 +32,7 @@ def analyze(
     gitleaks_json: str | None = None,
     osv_json: str | None = None,
     which: Callable[[str], str | None] = shutil.which,
+    execute: Scanner = execute_scanner,
 ) -> Analysis:
     coverage: list[CoverageNote] = []
     findings: list[Finding] = []
@@ -39,42 +41,49 @@ def analyze(
     findings.extend(dependency_findings(diffs, head_texts, architecture, adr_present=present))
     findings.extend(significance_findings(diffs, head_texts, architecture, adr_present=present))
     findings.extend(contract_findings(diffs, head_texts, base_texts))
-    findings.extend(
-        _scanner(
-            "semgrep",
-            config.analyzers.semgrep,
-            semgrep_json,
-            lambda payload: parse_semgrep(payload, diffs),
-            coverage,
-            which,
-        )
+    semgrep_findings, _semgrep_ran = _scanner(
+        "semgrep",
+        config.analyzers.semgrep,
+        semgrep_json,
+        lambda payload: parse_semgrep(payload, diffs),
+        coverage,
+        which,
+        execute,
+        diffs,
+        head_texts,
     )
-    gitleaks_findings = _scanner(
+    findings.extend(semgrep_findings)
+    gitleaks_findings, gitleaks_ran = _scanner(
         "gitleaks",
         config.analyzers.gitleaks,
         gitleaks_json,
         lambda payload: parse_gitleaks(payload, diffs),
         coverage,
         which,
+        execute,
+        diffs,
+        head_texts,
     )
-    if gitleaks_findings:
+    if gitleaks_ran:
         findings.extend(gitleaks_findings)
-    elif gitleaks_json is None:
+    else:
         findings.extend(builtin_secret_findings(diffs, head_texts))
-    findings.extend(
-        _scanner(
-            "osv-scanner",
-            config.analyzers.osv,
-            osv_json,
-            lambda payload: parse_osv(
-                payload,
-                added_names=added_dependency_names(diffs, head_texts),
-                files=head_texts,
-            ),
-            coverage,
-            which,
-        )
+    osv_findings, _osv_ran = _scanner(
+        "osv-scanner",
+        config.analyzers.osv,
+        osv_json,
+        lambda payload: parse_osv(
+            payload,
+            added_names=added_dependency_names(diffs, head_texts),
+            files=head_texts,
+        ),
+        coverage,
+        which,
+        execute,
+        diffs,
+        head_texts,
     )
+    findings.extend(osv_findings)
     query = " ".join(diff.path for diff in diffs)
     retrieved = retrieve(query, documents)
     return Analysis(findings=tuple(findings), coverage=tuple(coverage), retrieved=retrieved)
@@ -87,13 +96,24 @@ def _scanner(
     parse: Callable[[str], tuple[Finding, ...]],
     coverage: list[CoverageNote],
     which: Callable[[str], str | None],
-) -> tuple[Finding, ...]:
-    if payload is not None:
+    execute: Scanner,
+    diffs: tuple[DiffFile, ...],
+    head_texts: dict[str, str],
+) -> tuple[tuple[Finding, ...], bool]:
+    if payload is None:
+        note = binary_note(name, mode, which=which)
+        if note is not None:
+            coverage.append(note)
+            return (), False
+        payload = execute(name, diffs, head_texts)
+        if payload is None:
+            coverage.append(CoverageNote(name, "skipped", "scanner failed"))
+            return (), False
+        coverage.append(CoverageNote(name, "ran", "executed binary"))
+    else:
         coverage.append(CoverageNote(name, "ran", "parsed supplied output"))
-        return parse(payload)
-    note = binary_note(name, mode, which=which)
-    if note is not None:
-        coverage.append(note)
-        return ()
-    coverage.append(CoverageNote(name, "skipped", "binary present; no scanner output supplied"))
-    return ()
+    try:
+        return parse(payload), True
+    except (ValueError, TypeError):
+        coverage.append(CoverageNote(name, "skipped", "scanner output was not valid JSON"))
+        return (), False

@@ -1,0 +1,4 @@
+language: java
+lens: security
+expect:
+  - {standards_any: ["CWE-78"], file: app/Run.java, lines: [3, 3], min_severity: high}

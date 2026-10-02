@@ -1,0 +1,4 @@
+language: typescript
+lens: security
+expect:
+  - {standards_any: ["CWE-79"], file: web/profile.ts, lines: [2, 2], min_severity: high}

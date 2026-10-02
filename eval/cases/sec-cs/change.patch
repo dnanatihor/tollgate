@@ -1,0 +1,9 @@
+--- a/app/Orders.cs
++++ b/app/Orders.cs
+@@ -1,5 +1,5 @@
+ class Orders {
+     static string Load(string id) {
+-        return id;
++        return "SELECT * FROM orders WHERE id=" + id;
+     }
+ }

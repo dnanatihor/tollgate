@@ -14,9 +14,9 @@ import yaml
 _SEVERITY = ("info", "low", "medium", "high", "critical")
 
 
-def main() -> None:
+def main(cases_root: Path | None = None) -> None:
     root = Path(__file__).resolve().parents[1]
-    cases = _cases(root / "eval" / "cases")
+    cases = _cases(cases_root or root / "eval" / "cases")
     rows = [_run(root, case) for case in cases]
     report = _report(rows)
     destination = root / "eval" / "reports" / "latest.json"

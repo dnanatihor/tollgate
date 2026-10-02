@@ -12,6 +12,7 @@ def render_markdown(
     ranked: Ranked,
     verdict: Verdict,
     coverage: tuple[object, ...] = (),
+    architecture: str = "",
 ) -> str:
     lines = [
         "# Tollgate",
@@ -40,6 +41,18 @@ def render_markdown(
                 f"- `{finding.file}:{finding.start_line}` {finding.title} "
                 f"({', '.join(finding.standards)})"
             )
+    if ranked.dismissed:
+        lines.extend(["", "<details>", "<summary>Dismissed</summary>", ""])
+        for finding in ranked.dismissed:
+            reason = finding.status_reason or finding.status
+            lines.append(f"- {finding.title} — {reason}")
+        lines.extend(["", "</details>"])
+    if ranked.suppressed_in_pr:
+        lines.extend(["", "## Suppressed in this PR", ""])
+        for finding in ranked.suppressed_in_pr:
+            lines.append(f"- {finding.file}:{finding.start_line} {finding.title}")
+    if architecture:
+        lines.extend(["", "## Architecture", "", architecture.rstrip()])
     if coverage:
         lines.extend(["", "## Coverage", ""])
         for note in coverage:
@@ -49,9 +62,17 @@ def render_markdown(
     return "\n".join(lines) + "\n"
 
 
-def render_json(findings: list[Finding], verdict: Verdict) -> str:
+def render_json(
+    findings: list[Finding],
+    verdict: Verdict,
+    *,
+    dismissed: tuple[Finding, ...] = (),
+    suppressed_in_pr: tuple[Finding, ...] = (),
+) -> str:
     payload = {
         "verdict": verdict.outcome,
         "findings": [item.model_dump(mode="json") for item in findings],
+        "dismissed": [item.model_dump(mode="json") for item in dismissed],
+        "suppressed_in_pr": [item.model_dump(mode="json") for item in suppressed_in_pr],
     }
     return json.dumps(payload, indent=2) + "\n"

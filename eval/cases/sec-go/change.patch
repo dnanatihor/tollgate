@@ -1,0 +1,9 @@
+--- a/app/files.go
++++ b/app/files.go
+@@ -1,5 +1,5 @@
+ package app
+ 
+ func Read(name string) string {
+-    return name
++    return name + "/../../etc/passwd"
+ }

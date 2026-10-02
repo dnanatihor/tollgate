@@ -156,25 +156,34 @@ class GitHubProvider:
                 failed.append(item.path)
         return PostResult(posted=tuple(posted), failed=tuple(failed))
 
-    async def set_status(self, head_sha: str, verdict: Verdict, summary: str, *, mode: str) -> None:
+    async def set_status(
+        self,
+        head_sha: str,
+        verdict: Verdict,
+        summary: str,
+        *,
+        mode: str,
+        findings: tuple[Finding, ...] = (),
+    ) -> None:
         conclusion = _conclusion(verdict, mode)
-        annotations: list[dict[str, str]] = []
-        await self._json(
-            "POST",
-            "/check-runs",
-            write=True,
-            json={
-                "name": "Tollgate",
-                "head_sha": head_sha,
-                "status": "completed",
-                "conclusion": conclusion,
-                "output": {
-                    "title": f"Tollgate {verdict.outcome}",
-                    "summary": summary[:65000],
-                    "annotations": annotations,
+        batches = _annotation_batches(findings) or [[]]
+        for batch in batches:
+            await self._json(
+                "POST",
+                "/check-runs",
+                write=True,
+                json={
+                    "name": "Tollgate",
+                    "head_sha": head_sha,
+                    "status": "completed",
+                    "conclusion": conclusion,
+                    "output": {
+                        "title": f"Tollgate {verdict.outcome}",
+                        "summary": summary[:65000],
+                        "annotations": batch,
+                    },
                 },
-            },
-        )
+            )
 
     async def publish(
         self,
@@ -211,7 +220,7 @@ class GitHubProvider:
             event = "REQUEST_CHANGES"
         result = await self.post_inline(number, head_sha, comments, event=event)
         if mode != "comment":
-            await self.set_status(head_sha, verdict, body, mode=mode)
+            await self.set_status(head_sha, verdict, body, mode=mode, findings=findings)
         return result
 
     def write_sarif(self, path: Path, findings: list[Finding], verdict: Verdict) -> None:
@@ -265,6 +274,39 @@ def _comment(item: InlineComment) -> dict[str, Any]:
     if item.start_line is not None:
         payload["start_line"] = item.start_line
     return payload
+
+
+_ANNOTATION_LEVEL = {
+    "critical": "failure",
+    "high": "failure",
+    "medium": "warning",
+    "low": "notice",
+    "info": "notice",
+}
+_ANNOTATION_BATCH = 50
+
+
+def _annotation_batches(findings: tuple[Finding, ...]) -> list[list[dict[str, Any]]]:
+    """GitHub accepts at most 50 check annotations per request."""
+    items: list[dict[str, Any]] = []
+    for finding in findings:
+        if finding.status != "active" or finding.file is None or finding.start_line is None:
+            continue
+        end = finding.end_line if finding.end_line is not None else finding.start_line
+        items.append(
+            {
+                "path": finding.file,
+                "start_line": finding.start_line,
+                "end_line": end,
+                "annotation_level": _ANNOTATION_LEVEL[finding.severity],
+                "message": finding.title,
+                "title": finding.title[:255],
+            }
+        )
+    return [
+        items[offset : offset + _ANNOTATION_BATCH]
+        for offset in range(0, len(items), _ANNOTATION_BATCH)
+    ]
 
 
 def _conclusion(verdict: Verdict, mode: str) -> str:

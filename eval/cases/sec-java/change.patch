@@ -1,0 +1,9 @@
+--- a/app/Run.java
++++ b/app/Run.java
+@@ -1,5 +1,5 @@
+ class Run {
+     static void go(String cmd) {
+-        return;
++        Runtime.getRuntime().exec(cmd);
+     }
+ }

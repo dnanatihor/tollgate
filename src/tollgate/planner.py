@@ -30,10 +30,28 @@ class ReviewPlan:
     estimated_usd: float | None
 
 
-def estimate_tokens(text: str) -> int:
+def estimate_tokens(text: str, *, model: str | None = None) -> int:
+    """Count with tiktoken when that encoding is installed; otherwise characters ÷ 3.5."""
     if not text:
         return 0
-    return max(1, math.ceil(len(text) / 3.5 * 1.15))
+    precise = _tiktoken_count(text, model) if model else None
+    amount = float(precise) if precise is not None else len(text) / 3.5
+    return max(1, math.ceil(amount * 1.15))
+
+
+def _tiktoken_count(text: str, model: str | None) -> int | None:
+    if not model:
+        return None
+    try:
+        import tiktoken  # type: ignore[import-not-found]
+    except ImportError:
+        return None
+    name = model.split(":", 1)[-1]
+    try:
+        encoding = tiktoken.encoding_for_model(name)
+    except (KeyError, ValueError):
+        return None
+    return len(encoding.encode(text))
 
 
 def build_plan(files: tuple[ClassifiedFile, ...], config: TollgateConfig) -> ReviewPlan:
@@ -113,7 +131,8 @@ def _units_for(item: ClassifiedFile, config: TollgateConfig) -> list[ReviewUnit]
     if hidden:
         annotated = "«secret»"
     lenses = _lenses(item, config)
-    chunks = _split_annotated(annotated)
+    model = config.llm.roles.review.model
+    chunks = _split_annotated(annotated, model)
     units: list[ReviewUnit] = []
     for chunk in chunks:
         body = f"{chunk}\n{context}"
@@ -127,7 +146,7 @@ def _units_for(item: ClassifiedFile, config: TollgateConfig) -> list[ReviewUnit]
                 annotated_hunks=chunk,
                 structural_context=context,
                 lenses=lenses,
-                estimated_tokens=estimate_tokens(body),
+                estimated_tokens=estimate_tokens(body, model=model),
             )
         )
     return units
@@ -150,14 +169,14 @@ def _render_line(line: DiffLine) -> str | None:
     return f"L{line.new_line} {marker} {line.text}"
 
 
-def _split_annotated(annotated: str) -> list[str]:
-    if estimate_tokens(annotated) <= UNIT_TOKEN_BUDGET:
+def _split_annotated(annotated: str, model: str) -> list[str]:
+    if estimate_tokens(annotated, model=model) <= UNIT_TOKEN_BUDGET:
         return [annotated]
     chunks: list[str] = []
     current: list[str] = []
     for line in annotated.splitlines():
         tentative = "\n".join([*current, line])
-        if current and estimate_tokens(tentative) > UNIT_TOKEN_BUDGET:
+        if current and estimate_tokens(tentative, model=model) > UNIT_TOKEN_BUDGET:
             chunks.append("\n".join(current))
             current = [line]
         else:

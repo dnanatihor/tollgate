@@ -1,0 +1,4 @@
+language: go
+lens: security
+expect:
+  - {standards_any: ["CWE-22"], file: app/files.go, lines: [4, 4], min_severity: high}

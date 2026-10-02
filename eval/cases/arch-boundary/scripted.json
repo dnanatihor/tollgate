@@ -15,5 +15,17 @@
         ]
       }
     ]
+  },
+  {
+    "intent": "Architecture review of the scripted case.",
+    "significant_changes": [],
+    "adr": {
+      "required": false,
+      "present_in_pr": false,
+      "conflicts": []
+    },
+    "principle_concerns": [],
+    "risks": [],
+    "questions_for_author": []
   }
 ]

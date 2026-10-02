@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 import json
 import os
+import subprocess
 from pathlib import Path
 from typing import Any, Literal
 
@@ -13,6 +14,7 @@ import typer
 import yaml
 
 from tollgate.analyzers.run import analyze
+from tollgate.architecture_pr import assess_pull_request, load_documents, render_assessment
 from tollgate.classify import classify_changes
 from tollgate.config import (
     TollgateConfig,
@@ -33,10 +35,11 @@ from tollgate.rank import Ranked, rank_findings
 from tollgate.render.sarif import render_sarif
 from tollgate.render.summary import render_json, render_markdown
 from tollgate.scm.bitbucket_cloud import BitbucketCloudProvider
-from tollgate.scm.bitbucket_dc import BitbucketDataCenterProvider
+from tollgate.scm.bitbucket_dc import BitbucketDataCenterProvider, finding_line_types
 from tollgate.scm.github import GitHubProvider, checkout_mode, is_fork_event
 from tollgate.sources.local_git import load_local_git
 from tollgate.standards import load_catalogs, render_standards_list
+from tollgate.suppress import apply_suppressions, baseline_fingerprints
 from tollgate.verdict import decide
 
 app = typer.Typer(no_args_is_help=True, add_completion=False)
@@ -132,25 +135,19 @@ def review(
         for item in diff_files
         if item.status != "deleted"
     }
+    patterns = [*loaded.architecture.docs.adr, *loaded.architecture.docs.architecture]
+    documents = load_documents(Path.cwd(), loaded.base_sha, patterns)
     analysis = analyze(
         diff_files,
         head_texts=sources,
         base_texts=base_texts,
         architecture=loaded.architecture,
         config=loaded.tollgate,
+        documents=documents,
     )
-    if not plan.units:
-        ranked = rank_findings(list(analysis.findings), loaded.tollgate)
-        verdict = decide(list(ranked.findings), loaded.tollgate)
-        _emit(report_format, ranked, verdict, analysis.coverage)
-        if github:
-            _publish_github(ranked, verdict, loaded.tollgate.fingerprint(), loaded.tollgate.mode)
-        if bitbucket_cloud:
-            _publish_bitbucket(ranked, verdict, loaded.tollgate.fingerprint())
-        if bitbucket_dc:
-            _publish_dc(ranked, verdict, loaded.tollgate.fingerprint(), project, repo, pr_id)
-        return
     try:
+        model: ChatBackend | None = None
+        proposed = list(analysis.findings)
         if any(unit.lenses for unit in plan.units):
             model = _review_model(loaded.tollgate)
             outcome = asyncio.run(
@@ -163,27 +160,66 @@ def review(
                     organisation=organisation_ids(loaded.architecture),
                 )
             )
-            criticised = asyncio.run(
+            proposed = asyncio.run(
                 apply_critic(
                     [*outcome.ranked.findings, *analysis.findings],
                     model=model,
                     config=loaded.tollgate,
                 )
             )
-        else:
-            criticised = list(analysis.findings)
+        assessment = ""
+        if model is not None and loaded.tollgate.lenses.architecture:
+            reviewed = asyncio.run(
+                assess_pull_request(
+                    model,
+                    title=_commit_subject(head),
+                    description="",
+                    files=[item.path for item in diff_files],
+                    triggers="; ".join(
+                        item.title
+                        for item in analysis.findings
+                        if item.sources and item.sources[0].startswith("rule:")
+                    ),
+                    retrieved=list(analysis.retrieved),
+                    allowed_ids=", ".join(organisation_ids(loaded.architecture)),
+                    known_files={item.path for item in diff_files},
+                    known_documents={path for path, _text in documents},
+                )
+            )
+            assessment = render_assessment(reviewed)
     except ModelUnreachable as exc:
         typer.echo(str(exc), err=True)
         raise SystemExit(3) from None
-    merged = rank_findings(criticised, loaded.tollgate)
+    try:
+        known_baseline = baseline_fingerprints(
+            snapshot.read_text(".tollgate/baseline.json", loaded.base_sha)
+        )
+    except json.JSONDecodeError as exc:
+        raise ConfigError(".tollgate/baseline.json", "must be a JSON object") from exc
+    suppressed = apply_suppressions(
+        proposed,
+        head_texts=sources,
+        base_texts=base_texts,
+        baseline=known_baseline,
+        config=loaded.tollgate,
+    )
+    merged = rank_findings(suppressed, loaded.tollgate)
     verdict = decide(list(merged.findings), loaded.tollgate)
-    _emit(report_format, merged, verdict, analysis.coverage)
+    _emit(report_format, merged, verdict, analysis.coverage, assessment)
     if github:
         _publish_github(merged, verdict, loaded.tollgate.fingerprint(), loaded.tollgate.mode)
     if bitbucket_cloud:
         _publish_bitbucket(merged, verdict, loaded.tollgate.fingerprint())
     if bitbucket_dc:
-        _publish_dc(merged, verdict, loaded.tollgate.fingerprint(), project, repo, pr_id)
+        _publish_dc(
+            merged,
+            verdict,
+            loaded.tollgate.fingerprint(),
+            project,
+            repo,
+            pr_id,
+            finding_line_types(diff_files, merged.findings),
+        )
     if loaded.tollgate.mode != "comment" and verdict.outcome == "block":
         raise SystemExit(1)
 
@@ -315,15 +351,11 @@ def _publish_dc(
     project: str,
     repo: str,
     pr_id: str,
+    line_types: dict[str, Literal["ADDED", "CONTEXT"]],
 ) -> None:
     base_url = os.environ["BITBUCKET_URL"]
     token = os.environ["BITBUCKET_TOKEN"]
     markdown = render_markdown(ranked, verdict)
-    line_types: dict[str, Literal["ADDED", "CONTEXT"]] = {
-        item.fingerprint: "ADDED"
-        for item in ranked.findings
-        if item.file is not None and item.start_line is not None
-    }
 
     async def publish() -> None:
         headers = {"Authorization": f"Bearer {token}"}
@@ -366,14 +398,35 @@ def _emit(
     ranked: Ranked,
     verdict: Verdict,
     coverage: tuple[object, ...] = (),
+    architecture: str = "",
 ) -> None:
     findings: list[Finding] = list(ranked.findings)
     if report_format == "json":
-        typer.echo(render_json(findings, verdict), nl=False)
+        typer.echo(
+            render_json(
+                findings,
+                verdict,
+                dismissed=ranked.dismissed,
+                suppressed_in_pr=ranked.suppressed_in_pr,
+            ),
+            nl=False,
+        )
     elif report_format == "sarif":
         typer.echo(render_sarif(findings, verdict), nl=False)
     else:
-        typer.echo(render_markdown(ranked, verdict, coverage), nl=False)
+        typer.echo(render_markdown(ranked, verdict, coverage, architecture), nl=False)
+
+
+def _commit_subject(head: str) -> str:
+    completed = subprocess.run(
+        ["git", "log", "-1", "--format=%s", head],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if completed.returncode != 0:
+        return ""
+    return completed.stdout.strip()
 
 
 @models_app.command("check")
@@ -385,11 +438,85 @@ def models_check(
     roles: tuple[RoleName, ...] = ("triage", "review", "critic")
     for role in roles:
         try:
-            model_id, mode, elapsed = asyncio.run(probe_role(loaded.tollgate, role))
+            model_id, mode, elapsed, window = asyncio.run(probe_role(loaded.tollgate, role))
         except ModelUnreachable as exc:
             typer.echo(str(exc), err=True)
             raise SystemExit(3) from None
-        typer.echo(f"{role} model={model_id} mode={mode} latency_s={elapsed:.3f}")
+        shown = "unset" if window is None else str(window)
+        typer.echo(
+            f"{role} model={model_id} mode={mode} context_window={shown} latency_s={elapsed:.3f}"
+        )
+
+
+@app.command()
+def baseline(
+    base: str = typer.Option("main", "--base", help="Base ref of the diff to record."),
+    head: str = typer.Option("HEAD", "--head", help="Head ref of the diff to record."),
+    output: str = typer.Option(
+        ".tollgate/baseline.json",
+        "--output",
+        help="Where to write accepted fingerprints.",
+    ),
+) -> None:
+    """Record deterministic findings on the current diff so a later review accepts them."""
+    loaded = load_config(Path.cwd(), base_ref=base)
+    snapshot = load_local_git(Path.cwd(), base_ref=base, head_ref=head)
+    diff_files = parse_unified_diff(snapshot.diff_text)
+    sources = {
+        item.path: snapshot.read_text(item.path, snapshot.head_sha)
+        for item in diff_files
+        if item.status != "deleted"
+    }
+    base_texts = {
+        item.path: snapshot.read_text(item.path, snapshot.merge_base)
+        for item in diff_files
+        if item.status != "deleted"
+    }
+    analysis = analyze(
+        diff_files,
+        head_texts=sources,
+        base_texts=base_texts,
+        architecture=loaded.architecture,
+        config=loaded.tollgate,
+    )
+    fingerprints = sorted(
+        {item.fingerprint for item in analysis.findings if item.status == "active"}
+    )
+    destination = Path(output)
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    destination.write_text(
+        json.dumps({"fingerprints": fingerprints}, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    typer.echo(f"wrote {len(fingerprints)} fingerprints to {destination}")
+
+
+@app.command("eval")
+def eval_command(
+    cases: str = typer.Option("eval/cases", "--cases", help="Case directory."),
+    models: str = typer.Option(
+        "",
+        "--models",
+        help="Comma-separated real models. Requires API credentials.",
+    ),
+) -> None:
+    """Run the scripted evaluation harness. A real model needs credentials."""
+    if models.strip():
+        raise ConfigError(
+            "models",
+            "a configured real model needs API credentials; "
+            "omit --models to run the scripted harness",
+        )
+    import importlib.util
+
+    path = Path(__file__).resolve().parents[2] / "eval" / "harness.py"
+    spec = importlib.util.spec_from_file_location("tollgate_harness", path)
+    if spec is None or spec.loader is None:
+        raise ConfigError("eval", "eval/harness.py is not available")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    runner = module.__dict__["main"]
+    runner(Path(cases).resolve())
 
 
 @app.command()

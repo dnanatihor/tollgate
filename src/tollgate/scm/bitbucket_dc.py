@@ -6,9 +6,30 @@ from typing import Any, Literal
 
 import httpx
 
-from tollgate.models import Finding, Verdict
+from tollgate.models import DiffFile, Finding, Verdict
 from tollgate.scm.state import SUMMARY_MARKER, build_state, summary_body
 from tollgate.scm.types import neutralize
+
+
+def finding_line_types(
+    diffs: tuple[DiffFile, ...],
+    findings: tuple[Finding, ...],
+) -> dict[str, Literal["ADDED", "CONTEXT"]]:
+    """Map each finding to ``ADDED`` or ``CONTEXT`` from the parsed diff."""
+    kinds: dict[tuple[str, int], Literal["ADDED", "CONTEXT"]] = {}
+    for diff in diffs:
+        path = getattr(diff, "path", "")
+        for hunk in getattr(diff, "hunks", ()):
+            for line in hunk.lines:
+                if line.new_line is None or line.kind not in {"+", " "}:
+                    continue
+                kinds[(path, line.new_line)] = line_type_for(line.kind)
+    mapped: dict[str, Literal["ADDED", "CONTEXT"]] = {}
+    for finding in findings:
+        if finding.file is None or finding.start_line is None:
+            continue
+        mapped[finding.fingerprint] = kinds.get((finding.file, finding.start_line), "ADDED")
+    return mapped
 
 
 def line_type_for(kind: str) -> Literal["ADDED", "CONTEXT"]:

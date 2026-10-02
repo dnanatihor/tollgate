@@ -41,7 +41,7 @@ Scripted eval report from `uv run python eval/harness.py` (`eval/reports/latest.
 | performance | 1.0 | 1.0 |
 | security | 1.0 | 1.0 |
 
-37 seeded cases, 10 clean cases, 0 clean-case false positives at medium or above, 0 inline comments per PR in the scripted run, and 0 USD because the scripted model is unpriced. The critic stays on for high and above; a rejection dismisses the finding so it cannot block.
+41 seeded cases (Python, TypeScript, Java, Go, and C#), 10 clean cases, 0 clean-case false positives at medium or above, 0 inline comments per PR in the scripted run, and 0 USD because the scripted model is unpriced. The critic stays on for high and above; a rejection dismisses the finding so it cannot block.
 
 ## Design decisions
 

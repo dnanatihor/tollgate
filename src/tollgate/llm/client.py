@@ -94,7 +94,7 @@ def chat_for(config: TollgateConfig, role: RoleName) -> LangChainChat:
     )
 
 
-async def probe_role(config: TollgateConfig, role: RoleName) -> tuple[str, str, float]:
+async def probe_role(config: TollgateConfig, role: RoleName) -> tuple[str, str, float, int | None]:
     model = chat_for(config, role)
     started = time.perf_counter()
     try:
@@ -111,7 +111,7 @@ async def probe_role(config: TollgateConfig, role: RoleName) -> tuple[str, str, 
     except Exception as exc:
         raise ModelUnreachable(f"{role} {model.model_id}: {exc}") from exc
     elapsed = time.perf_counter() - started
-    return model.model_id, used, elapsed
+    return model.model_id, used, elapsed, config.llm.context_window
 
 
 def _split_model(model_id: str) -> tuple[str, str]:

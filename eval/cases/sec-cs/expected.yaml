@@ -1,0 +1,4 @@
+language: csharp
+lens: security
+expect:
+  - {standards_any: ["CWE-89"], file: app/Orders.cs, lines: [3, 3], min_severity: high}

@@ -1817,7 +1817,7 @@ wheels = [
 ]
 
 [[package]]
-name = "tollgate"
+name = "tollgate-review"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [

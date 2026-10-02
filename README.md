@@ -1,6 +1,7 @@
 # Tollgate — Enterprise-architect-level AI pull request reviewer
 
 [![CI](https://img.shields.io/badge/CI-github%20actions-2ea44f)](./.github/workflows/ci.yml)
+[![PyPI](https://img.shields.io/badge/PyPI-tollgate--review-blue)](https://pypi.org/project/tollgate-review/)
 [![Licence](https://img.shields.io/badge/license-Apache--2.0-blue)](./LICENSE)
 
 <!-- TODO: replace docs/demo.gif with a recording of a GitHub summary and a Bitbucket Code Insights screenshot. -->
@@ -12,12 +13,22 @@ Security, architecture, and performance issues land in pull requests faster than
 
 ## Quickstart
 
+From this repository:
+
 ```bash
 uv sync --frozen
 uv run tollgate standards list
 uv run tollgate review --local --base main --dry-run
 ```
 
+After a PyPI release (package name `tollgate-review`; the CLI stays `tollgate`):
+
+```bash
+pip install tollgate-review
+tollgate review --local --base main --dry-run
+```
+
+See [docs/publishing.md](docs/publishing.md) for tagging a release.
 ## How it works
 
 ```mermaid

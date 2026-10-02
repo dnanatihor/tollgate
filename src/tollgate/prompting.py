@@ -43,9 +43,12 @@ PROMPT_NAMES = {
 
 
 def prompts_directory() -> Path:
-    packaged = Path(__file__).resolve().parents[2] / "prompts"
+    packaged = Path(__file__).resolve().parent / "prompts_data"
     if (packaged / "security.v1.md").is_file():
         return packaged
+    repo = Path(__file__).resolve().parents[2] / "prompts"
+    if (repo / "security.v1.md").is_file():
+        return repo
     cwd = Path.cwd()
     for parent in (cwd, *cwd.parents):
         candidate = parent / "prompts"

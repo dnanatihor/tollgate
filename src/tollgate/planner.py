@@ -223,6 +223,7 @@ def _usd(tokens: int, model: str) -> float | None:
 def _load_prices() -> dict[str, float]:
     roots = [
         Path.cwd() / "prices.yaml",
+        Path(__file__).resolve().parent / "prices.yaml",
         Path(__file__).resolve().parents[2] / "prices.yaml",
     ]
     for path in roots:

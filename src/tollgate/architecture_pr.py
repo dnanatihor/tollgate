@@ -142,6 +142,7 @@ async def assess_pull_request(
     allowed_ids: str,
     known_files: set[str],
     known_documents: set[str],
+    mode: str = "auto",
 ) -> ArchitectureAssessment:
     system, user = render_named(
         "architecture_pr",
@@ -159,7 +160,7 @@ async def assess_pull_request(
         system=system,
         user=user,
         schema=ArchitectureAssessment,
-        mode="native",
+        mode=mode,
     )
     assessment = (
         parsed

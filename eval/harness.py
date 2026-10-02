@@ -14,12 +14,13 @@ import yaml
 _SEVERITY = ("info", "low", "medium", "high", "critical")
 
 
-def main(cases_root: Path | None = None) -> None:
+def main(cases_root: Path | None = None, model: str | None = None) -> None:
     root = Path(__file__).resolve().parents[1]
     cases = _cases(cases_root or root / "eval" / "cases")
-    rows = [_run(root, case) for case in cases]
-    report = _report(rows)
-    destination = root / "eval" / "reports" / "latest.json"
+    rows = [_run(root, case, model) for case in cases]
+    report = _report(rows, model or "scripted:test")
+    name = "latest.json" if model is None else f"real-{_slug(model)}.json"
+    destination = root / "eval" / "reports" / name
     destination.parent.mkdir(parents=True, exist_ok=True)
     destination.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(report, indent=2))
@@ -43,11 +44,13 @@ def _cases(root: Path) -> list[Path]:
     return found
 
 
-def _run(repo_root: Path, case: Path) -> dict[str, object]:
+def _run(repo_root: Path, case: Path, model: str | None) -> dict[str, object]:
     work = Path("/tmp") / "tollgate-eval" / case.name
     if work.exists():
         shutil.rmtree(work)
     shutil.copytree(case / "base", work)
+    if model:
+        _pin_model(work / ".tollgate.yml", model)
     _git(work, "init", "-b", "main")
     _git(work, "add", "-A")
     _git(work, "commit", "-m", "base")
@@ -76,7 +79,9 @@ def _run(repo_root: Path, case: Path) -> dict[str, object]:
         _git(work, "commit", "-m", "change")
     env = os.environ.copy()
     scripted = case / "scripted.json"
-    if scripted.is_file():
+    if model:
+        env.pop("TOLLGATE_SCRIPTED", None)
+    elif scripted.is_file():
         env["TOLLGATE_SCRIPTED"] = str(scripted)
     completed = subprocess.run(
         [
@@ -98,8 +103,9 @@ def _run(repo_root: Path, case: Path) -> dict[str, object]:
         text=True,
         check=False,
     )
-    if completed.returncode not in {0, 1}:
-        raise RuntimeError(completed.stderr or completed.stdout)
+    if completed.returncode not in {0, 1} or "{" not in completed.stdout:
+        detail = completed.stderr or completed.stdout
+        raise RuntimeError(detail[-4000:])
     payload = _json_payload(completed.stdout)
     findings = payload.get("findings", [])
     expected = yaml.safe_load((case / "expected.yaml").read_text(encoding="utf-8"))
@@ -116,7 +122,22 @@ def _run(repo_root: Path, case: Path) -> dict[str, object]:
     }
 
 
-def _report(rows: list[dict[str, object]]) -> dict[str, object]:
+def _pin_model(path: Path, model: str) -> None:
+    path.write_text(
+        path.read_text(encoding="utf-8")
+        + "\nllm:\n  roles:\n"
+        + f"    triage:\n      model: {model}\n"
+        + f"    review:\n      model: {model}\n"
+        + f"    critic:\n      model: {model}\n",
+        encoding="utf-8",
+    )
+
+
+def _slug(model: str) -> str:
+    return "".join(char if char.isalnum() else "-" for char in model).strip("-")
+
+
+def _report(rows: list[dict[str, object]], model: str = "scripted:test") -> dict[str, object]:
     seeded = [row for row in rows if row["kind"] == "seeded"]
     clean = [row for row in rows if row["kind"] == "clean"]
     by_lens: dict[str, dict[str, int]] = {}
@@ -136,7 +157,7 @@ def _report(rows: list[dict[str, object]]) -> dict[str, object]:
     }
     false_positives = sum(int(row["published"]) for row in clean)
     return {
-        "model": "scripted:test",
+        "model": model,
         "seeded": len(seeded),
         "clean": len(clean),
         "recall_by_lens": recall,

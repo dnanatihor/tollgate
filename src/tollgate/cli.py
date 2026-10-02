@@ -146,12 +146,13 @@ def review(
         documents=documents,
     )
     try:
-        model: ChatBackend | None = None
         proposed = list(analysis.findings)
+        assessment = ""
         if any(unit.lenses for unit in plan.units):
-            model = _review_model(loaded.tollgate)
-            outcome = asyncio.run(
-                review_plan(
+
+            async def _model_pass() -> tuple[list[Finding], str]:
+                model = _review_model(loaded.tollgate)
+                outcome = await review_plan(
                     plan,
                     config=loaded.tollgate,
                     model=model,
@@ -159,34 +160,33 @@ def review(
                     cache_dir=Path.cwd() / ".tollgate_cache",
                     organisation=organisation_ids(loaded.architecture),
                 )
-            )
-            proposed = asyncio.run(
-                apply_critic(
+                criticised = await apply_critic(
                     [*outcome.ranked.findings, *analysis.findings],
                     model=model,
                     config=loaded.tollgate,
                 )
-            )
-        assessment = ""
-        if model is not None and loaded.tollgate.lenses.architecture:
-            reviewed = asyncio.run(
-                assess_pull_request(
-                    model,
-                    title=_commit_subject(head),
-                    description="",
-                    files=[item.path for item in diff_files],
-                    triggers="; ".join(
-                        item.title
-                        for item in analysis.findings
-                        if item.sources and item.sources[0].startswith("rule:")
-                    ),
-                    retrieved=list(analysis.retrieved),
-                    allowed_ids=", ".join(organisation_ids(loaded.architecture)),
-                    known_files={item.path for item in diff_files},
-                    known_documents={path for path, _text in documents},
-                )
-            )
-            assessment = render_assessment(reviewed)
+                text = ""
+                if loaded.tollgate.lenses.architecture:
+                    reviewed = await assess_pull_request(
+                        model,
+                        title=_commit_subject(head),
+                        description="",
+                        files=[item.path for item in diff_files],
+                        triggers="; ".join(
+                            item.title
+                            for item in analysis.findings
+                            if item.sources and item.sources[0].startswith("rule:")
+                        ),
+                        retrieved=list(analysis.retrieved),
+                        allowed_ids=", ".join(organisation_ids(loaded.architecture)),
+                        known_files={item.path for item in diff_files},
+                        known_documents={path for path, _text in documents},
+                        mode=loaded.tollgate.llm.structured_output,
+                    )
+                    text = render_assessment(reviewed)
+                return criticised, text
+
+            proposed, assessment = asyncio.run(_model_pass())
     except ModelUnreachable as exc:
         typer.echo(str(exc), err=True)
         raise SystemExit(3) from None
@@ -500,13 +500,7 @@ def eval_command(
         help="Comma-separated real models. Requires API credentials.",
     ),
 ) -> None:
-    """Run the scripted evaluation harness. A real model needs credentials."""
-    if models.strip():
-        raise ConfigError(
-            "models",
-            "a configured real model needs API credentials; "
-            "omit --models to run the scripted harness",
-        )
+    """Run the evaluation harness. Omit --models for the scripted report."""
     import importlib.util
 
     path = Path(__file__).resolve().parents[2] / "eval" / "harness.py"
@@ -516,7 +510,8 @@ def eval_command(
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     runner = module.__dict__["main"]
-    runner(Path(cases).resolve())
+    chosen = models.split(",")[0].strip()
+    runner(Path(cases).resolve(), chosen or None)
 
 
 @app.command()

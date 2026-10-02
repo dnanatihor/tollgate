@@ -1,0 +1,24 @@
+{
+  "model": "openai:gpt-4.1-mini",
+  "seeded": 41,
+  "clean": 10,
+  "recall_by_lens": {
+    "architecture": 0.5,
+    "llm_security": 0.14285714285714285,
+    "performance": 0.16666666666666666,
+    "security": 0.05555555555555555
+  },
+  "precision_by_lens": {
+    "architecture": 0.625,
+    "llm_security": 0.5,
+    "performance": 0.5,
+    "security": 1.0
+  },
+  "clean_false_positives": 0,
+  "inline_comments_per_pr": 0,
+  "cost_usd_per_pr": 0,
+  "critic": {
+    "note": "Default stays on for high and above. A rejected finding is dismissed and cannot block; see tests/test_critic.py.",
+    "default_enabled": true
+  }
+}
